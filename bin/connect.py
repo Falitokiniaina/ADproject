@@ -8,13 +8,13 @@ from sqlalchemy.orm import sessionmaker
 import sys, traceback
 
 
-def connect():
-    #DEFAULT VALUES
-    hostname = 'localhost'
-    port = '5432'
-    username = 'postgres'
-    password = 'root'
+def connect(
+    hostname = 'localhost',
+	port = '5432',
+    username = 'postgres',
+    password = 'root',
     dbname = 'adb'
+	):
 
     connection_string = 'postgresql+psycopg2://' + username + ':' + password + '@' + hostname + ':' + port + '/' + dbname
     
@@ -28,7 +28,7 @@ def connect():
             port = input('\nPort:\n> ')
             username = input('\nUsername:\n> ')
             password = input('\nPassword:\n> ')
-            database = input('\nDatabase name:\n> ')
+            dbname = input('\nDatabase name:\n> ')
            
             if hostname and port and username and password and dbname:
                 connection_string = 'postgresql+psycopg2://' + username + ':' + password + '@' + hostname + ':' + port + '/' + dbname 
@@ -37,9 +37,9 @@ def connect():
             else:
                 print ('\nAll fields are mandatory.')
         
-
     try:
         engine = sqlalchemy.create_engine(connection_string)
+        engine.connect()
         Session = sessionmaker(bind=engine)
         session = Session()
         print('\nConnected!\n')
