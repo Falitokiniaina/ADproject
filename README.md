@@ -1,4 +1,7 @@
 ADproject
 =========
 
-projet advanced database
+Yet Another Datalog Interpreter (YADI) 2
+
+
+- Marcello was here

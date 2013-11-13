@@ -1,11 +1,14 @@
-# Last modify Marcello 09/11/2013 
+""" 
+Connection to database postgreSQL
+Last modify:
+	Marcello and Fali 12/11/2013
+"""
 
+import sys, traceback
 import sqlalchemy
 import psycopg2
 from sqlalchemy.orm import sessionmaker
 #from sqlalchemy.ext.declarative import declarative_base
-
-import sys, traceback
 
 
 def connect(
