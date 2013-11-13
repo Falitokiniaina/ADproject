@@ -1,3 +1,13 @@
 TODO:
-Everything
-modified
+Marsellus Wallace
+So guys the good news is that we are getting somewhere. Me and Fali worked hard on the parsing today. We managed to take a string in input, tokenize it and build a syntax tree. We will be kinda busy with this because there are possible errors to catch and several rules to write.
+Here is what I mean. As long as we have understood the syntax tree will be a dictionary with the components of the query. For instance let's do an insert:
+train("Lyon", "Paris"). 
+we will get something like:
+{type: 'insert', col1: 'Lyon', col2:'Paris'}. 
+Let's do a select: 
+R(X) :-train("Lyon",X) 
+and we would get:
+{type: 'select', from_tables:['train'], where_clause:['col1':'Lyon'] }
+This is just an idea since we didn't get so far! Let us know if this is the correct approach! If you think so, then someone should work on the translation of this dictionary into an SQL string and on sending the query to the DB.
+We could also have a call when you prefer. Cheers
