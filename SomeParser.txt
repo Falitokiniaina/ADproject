@@ -1,0 +1,25 @@
+  ":-"  { IMPLIEDBY }
+    
+  "?-" { QMARK }  (* query mark *)
+    
+  '.'{ DOT }    (* end of rule or query *)
+    
+  ','   { SEP }
+    
+  '(' { LPAREN }
+    
+  ')' { RPAREN }
+    
+  '=' { EQ }
+    
+  '/' { EOP }
+
+  '_' { ANONVAR }
+    
+  "<=" { LE }
+    
+  ">="{ GE }
+    
+  '<'{ LT }
+
+  '>'{ GT }
