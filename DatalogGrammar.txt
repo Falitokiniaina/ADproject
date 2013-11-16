@@ -1,0 +1,37 @@
+<Datalog Program> -> Schemes : <Scheme List> 
+ Facts : <Fact List>
+ Rules : <Rule List>
+ Queries : <Query List>
+ <EOF>
+<Scheme List> -> <Scheme><Scheme List Tail>
+<Scheme List Tail> -> <Scheme List> | e
+<Scheme> -> <Scheme Name> ( <Attribute List> )
+<Scheme Name> -> <Identifier>
+<Attribute List> -> <Attribute> <Attribute List Tail>
+<Attribute List Tail> -> , <Attribute List> | e
+<Attribute> -> <Identifier>
+<Fact List> -> <Fact> <Fact List> | e
+<Fact> -> <Fact Name> ( <Constant List> ) .
+<Fact Name> -> <Identifier>
+<Constant List> -> <String> <Constant List Tail>
+<Constant List Tail> -> , <Constant List> | e
+<Rule List> -> <Rule> <Rule List> | e
+<Rule> -> <Simple Predicate> :- <Predicate List> .
+<Simple Predicate> -> <Predicate Name> ( <Argument List> )
+<Predicate Name> -> <Identifier>
+<Argument List> -> <Argument> <Argument List Tail>
+<Argument List Tail> -> , <Argument List> | e
+<Argument> -> <String> | <Identifier> 
+<Predicate List> -> <Predicate> <Predicate List Tail>
+<Predicate List Tail> -> , <Predicate List> | e
+<Predicate> -> <Predicate Name> ( <Parameter List> )
+<Parameter List> -> <Parameter> <Parameter List Tail>
+<Parameter List Tail> -> , <Parameter List> | e
+<Parameter> -> <Argument> | <Comparator> | <Expression>
+<Comparator> -> <Comparator Name> (<Argument>,<Argument>)
+<Comparator Name> -> < | <= | = | != | >= | >
+<Expression> -> ( <Parameter> <Operator> <Parameter> )
+<Operator> -> + | *
+<Query List> -> <Query> <Query List Tail>
+<Query List Tail> -> <Query List> | e
+<Query> -> <Simple Predicate> ?
