@@ -58,7 +58,20 @@ Documentation for YADI is available online via link(s).
 		
 
 # Usage – operating instructions
-To be edited later on.
+
+The usage of the generated executable files is the following one:
+OPTIONS:
+- h host	: Database server host (default: "yadi")
+- p port	: Database server port (default: "5432")
+- U user	: Database user (deafult: "yadi")
+- w password	: Database user password (default: empty)
+- d dbname	: Database name to connect to (default: "yadi")
+- db		: print debugging information
+- f file	: read program from file
+- help		: Disply this list of options
+
+Where the provided arguments correspond to the needed information to connect into PostgreSQL database. There are also
+default values to the arguments
 	
 
 # Requirements – configuration instructions
