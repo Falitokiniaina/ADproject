@@ -20,8 +20,24 @@ To be edited later on. According to our level of achievement.
 
 # Installation instructions
 
-To be edited later on.
+Section {dependecies}
+In order to compile this software, it is necessary to have the following software installed in the machine;
+- Ocaml 4.0.0
+- PostgreSQL 9.0
+- Postgresql-ocaml 2.0.1
+- findlib 1.3.1
+- GNU Make 3.81
 
+{Pre-requisites}
+
+Follow these steps:
+- Begin (enumerate)
+- Uncompress the source archive and go to the root directory,
+- From the root directory, run "make",
+- The final executable file can be found in the''bin/" directory and it will be called "YADI", i.e: \emph{bin/yadi},
+- From starting to use the program, just execute the \emph{yadi} file, for information about the command line, 
+  pass the ''--help" flag,
+- end (enumerate)
 
 # Documentation
 
