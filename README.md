@@ -46,7 +46,13 @@ To be edited later on.
 
 # Requirements – configuration instructions
 
-The programming language is Python. It is available for any Win32/Linux/MacOSX box.
+The programming language is Python. It is available for any Win32/Linux/MacOSX box. 
+
+PLY (Python Lex-Yacc) Datalog Parser
+
+Other ???
+
+These can be installed by PIP from PyPI
 
 
 # Contributing and Contact
