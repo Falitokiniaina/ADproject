@@ -10,7 +10,6 @@ http://www.dabeaz.com/ply/ply.html
 import ply.lex as lex
 import ply.yacc as yacc
 import os
-from input_output_rules import inputOutputRules
 
 
 # Superclass for Datalog parser
