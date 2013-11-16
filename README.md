@@ -71,7 +71,11 @@ OPTIONS:
 - help		: Disply this list of options
 
 Where the provided arguments correspond to the needed information to connect into PostgreSQL database. There are also
-default values to the arguments
+default values to the arguments. The following line contains an example invocation of the executable:
+
+./yadi -h 127.0.0.1 -p 5432 -U myuser -w secret -d mydb
+If the connection was correctly done, then the following line should show;
+yadi
 	
 
 # Requirements – configuration instructions
