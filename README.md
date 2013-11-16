@@ -3,32 +3,32 @@
 YADI was written by Marsellus Wallace, Ephrem Berhe Gebremariam, Falitokiniaina Rabearison, Kiril Sardjoski, Reddy Aldino, and Ivan Vukić. It was written as a project for the Advance databases course which is part of Data Mining and Knowledge Management european master.
 
 
-What is it?
+# What is it?
 
 YADI is Command Line Interpreter for Datalog queries. It parses and evaluates Datalog queries on top of an SQL engine. Python language is used. Parsing of Datalog queries is achieved with PLY (Python Lex-Yacc). PostgreSQL database system is used.
 
 
-YADI's dynamics
+# YADI's dynamics
 
 YADI transforms a Datalog query to an Abstract Syntax Tree and provides with a query evaluation mechanism. YADI convert the query to an SQL statement and delegate the evaluation to the backend SQL engine (if any), moreower additional evaluation algorithms were designed. 
 
 
-What can I do with it?
+# What can I do with it?
 
 To be edited later on. According to our level of achievement.
 
 
-Installation instructions
+# Installation instructions
 
 To be edited later on.
 
 
-Documentation
+# Documentation
 
 Documentation for YADI is available online via link(s). 
 
 
-Example
+# Example
 	A Datalog query against {R(A,B), S(B,C,D)} database looks like this:
 		V(x,y) :- R(x,y) and S(y,_,_). 
 		Q(x,y) :- S(x,y,z) and V(z,t) and t>=3.
@@ -40,25 +40,26 @@ Example
 		WHERE R.B=S1.B AND R.A=S2.D AND S1.B>=3
 		
 
-Usage – operating instructions
+# Usage – operating instructions
 To be edited later on.
 	
 
-Requirements – configuration instructions
+# Requirements – configuration instructions
 
 The programming language is Python. It is available for any Win32/Linux/MacOSX box.
 
 
-Contributing and Contact
+# Contributing and Contact
 
 Forks, patches and any other kind of feedback is welcome. You can contact us via GitHub and also via email vukicivan@yahoo.com 
 
 
-Credits and Aknowledgments
+# Credits and Aknowledgments
+
 ddd
 
 
-License
+# License
 
 Copyright (c) 2013. Authors. 
 
