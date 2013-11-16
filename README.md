@@ -1,4 +1,4 @@
-Introduction
+# Introduction
 
 YADI was written by Marsellus Wallace, Ephrem Berhe Gebremariam, Falitokiniaina Rabearison, Kiril Sardjoski, Reddy Aldino, and Ivan Vukić. It was written as a project for the Advance databases course which is part of Data Mining and Knowledge Management european master.
 
