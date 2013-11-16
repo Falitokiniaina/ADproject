@@ -8,17 +8,17 @@ YADI is Command Line Interpreter for Datalog queries. It parses and evaluates Da
 
 YADI's dynamics
 
-	YADI transforms a Datalog query to an Abstract Syntax Tree and provides with a query evaluation mechanism. YADI convert the query to an SQL statement and delegate the evaluation to the backend SQL engine (if any), moreower additional evaluation algorithms were designed. 
+YADI transforms a Datalog query to an Abstract Syntax Tree and provides with a query evaluation mechanism. YADI convert the query to an SQL statement and delegate the evaluation to the backend SQL engine (if any), moreower additional evaluation algorithms were designed. 
 
 What can I do with it?
 
-	To be edited later on. According to our level of achievement.
+To be edited later on. According to our level of achievement.
 
 Installation instructions
-	To be edited later on.
+To be edited later on.
 
 Documentation
-	Documentation for YADI is available online via link(s). 
+Documentation for YADI is available online via link(s). 
 
 Example
 	A Datalog query against {R(A,B), S(B,C,D)} database looks like this:
