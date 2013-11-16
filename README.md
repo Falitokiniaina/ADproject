@@ -1,6 +1,6 @@
 # Introduction
 
-YADI was written by Marsellus Wallace, Ephrem Berhe Gebremariam, Falitokiniaina Rabearison, Kiril Sardjoski, Reddy Aldino, and Ivan Vukić. It was written as a project for the Advance databases course which is part of Data Mining and Knowledge Management european master.
+YADI was written by Marcello Benedetti, Ephrem Berhe Gebremariam, Falitokiniaina Rabearison, Kiril Sardjoski, Reddy Aldino, and Ivan Vukić. It was written as a project for the Advance databases course which is part of Data Mining and Knowledge Management european master.
 
 
 # What is it?
@@ -57,7 +57,14 @@ These can be installed by PIP from PyPI
 
 # Contributing and Contact
 
-Forks, patches and any other kind of feedback is welcome. You can contact us via GitHub and also via email vukicivan@yahoo.com 
+Please feel free to send us feedback about forks, patches and any other kind. You can contact us via GitHub and also via email.
+
+Ivan Vukic: vukicivan@yahoo.com
+Ephrem Berhe Gebremariam: eepphhrreemm@gmail.com
+Marcello Benedetti: 
+Falitokiniaina Rabearison:
+Kiril Sardjoski: kiril.sardjoski@gmail.com
+Reddy Aldino:
 
 
 # Credits and Aknowledgments
