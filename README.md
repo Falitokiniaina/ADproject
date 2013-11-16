@@ -61,8 +61,8 @@ Please feel free to send us feedback about forks, patches and any other kind. Yo
 
 Ivan Vukic: vukicivan@yahoo.com
 Ephrem Berhe Gebremariam: eepphhrreemm@gmail.com
-Marcello Benedetti: 
-Falitokiniaina Rabearison:
+Marcello Benedetti: 4marcello@gmail.com
+Falitokiniaina Rabearison: r.falitokiniaina@gmail.com
 Kiril Sardjoski: kiril.sardjoski@gmail.com
 Reddy Aldino:
 
