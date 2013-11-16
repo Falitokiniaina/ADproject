@@ -4,7 +4,7 @@ Last modify:
 	Marcello 12/11/2013
 """
 
-from parseQuery import Datalog
+from parseQuery import *
 
 
 # For every input it calls the parser and show test results (for now)
@@ -20,8 +20,6 @@ def datalogQuery():
         if not string_to_parse: 
             continue
         
-        #TEST
-        datalog.runTests(string_to_parse)
-        
         # To get actual results uncomment this
-        #results = datalog.getParsingOf(string_to_parse)
+        results = datalog.getParsingOf(string_to_parse)
+        print(results.contentToString())

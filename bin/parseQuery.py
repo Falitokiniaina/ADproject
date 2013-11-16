@@ -17,16 +17,7 @@ class Parser:
 
     tokens = ()
     precedence = ()
-    results = {}
-    
-    # Parse a string
-    def getParsingOf(self, string_to_parse):
-        #self.results = {}
-        if not string_to_parse: 
-            return "Error: empty string"
-        self.results = yacc.parse(string_to_parse)
-        return self.results
-    
+    results = {} 
     
     # Config Lex and Yacc
     def __init__(self, **kw):
@@ -63,11 +54,18 @@ class Parser:
                 continue
             self.results = yacc.parse(string_to_parse)
             # TESTS
-            #print(self.results.contentToString())
-            # for i in self.results.rules:
-                # print (i.__dict__)
             print(self.results.contentToString())
          
+         
+    # Parse a string
+    def getParsingOf(self, string_to_parse):
+        self.results = {}
+        if not string_to_parse: 
+            return "Error: empty string"
+        self.results = yacc.parse(string_to_parse)
+        return self.results
+     
+     
 # Datalog parser class  
 class Datalog(Parser):
     
@@ -220,7 +218,7 @@ class AST(object):
     def __init__(self, nodes):
         self.node = nodes       
     def contentToString(self):
-        contentStr = "TREE\n"
+        contentStr = "TREE: \n"
         for node in self.node:
             contentStr = contentStr + node.contentToString()
         return contentStr   
