@@ -10,7 +10,7 @@ YADI is Command Line Interpreter for Datalog queries. It parses and evaluates Da
 
 # YADI's dynamics
 
-YADI transforms a Datalog query to an Abstract Syntax Tree and provides with a query evaluation mechanism. YADI convert the query to an SQL statement and delegate the evaluation to the backend SQL engine (if any), moreower additional evaluation algorithms were designed. 
+YADI transforms a Datalog query to an Abstract Syntax Tree and provides with a query evaluation mechanism. YADI convert the query to an SQL statement and delegate the evaluation to the backend SQL engine, moreower additional evaluation algorithms were designed. 
 
 
 # What can I do with it?
@@ -20,24 +20,21 @@ To be edited later on. According to our level of achievement.
 
 # Installation instructions
 
+The programming language is Python 3. It is available for any Win32/Linux/MacOSX box. 
+A local or remote PostgreSQL database is also needed.
+
 Dependecies
 In order to run this software, it is necessary to have the following libraries installed in the machine:
 - ply (Python Lex-Yacc)
 - psycopg2 (PostgreSQL connection driver) 
 - sqlalchemy (SQL toolkit)
-The last version of these libraries can be easily intalled using pip (Python Package Index)
+The last version of these libraries can be easily intalled using pip (Python Package Index).
 
 Pre-requisites
 For running YADI it is necessary to have a connection to PostgreSQL database.
-when starting the program it would be necessary to provide a username, database name, host, port and password.
-the user will need having write/read permission over the database.
+When starting the program it would be necessary to provide a username, database name, host, port and password.
+The user will need having write/read permission over the database.
 
-Follow these steps:
-- Uncompress the source archive and go to the root directory,
-- From the root directory, run "make",
-- The final executable file can be found in the''bin/" directory and it will be called "YADI", i.e: \emph{bin/yadi},
-- From starting to use the program, just execute the \emph{yadi} file, for information about the command line, 
-  pass the ''--help" flag,
 
 # Documentation
 
@@ -78,22 +75,20 @@ $python guy.py -h 127.0.0.1 -p 5432 -U user -w password -d mydb
 Connection can be also done from the graphical user interface.
 	
 
-# Requirements – configuration instructions
-
-The programming language is Python 3. It is available for any Win32/Linux/MacOSX box. 
-
-A local or remote PostgreSQL database is needed.
-
-
 # Contributing and Contact
 
 Please feel free to send us feedback about forks, patches and any other kind. You can contact us via GitHub and also via email.
 
-Ivan Vukic: vukicivan@yahoo.com 
-Ephrem Berhe Gebremariam: eepphhrreemm@gmail.com 
+Ivan Vukic: vukicivan@yahoo.com
+
+Ephrem Berhe Gebremariam: eepphhrreemm@gmail.com
+
 Marcello Benedetti: 4marcello@gmail.com 
+
 Falitokiniaina Rabearison: r.falitokiniaina@gmail.com 
+
 Kiril Sardjoski: kiril.sardjoski@gmail.com 
+
 Reddy Aldino: redino26@gmail.com 
 
 
