@@ -55,7 +55,7 @@ Documentation for YADI is available online via link(s).
 
 # Usage – operating instructions
 
-	python guy.py
+	python gui.py
 
 (TODO)
 
@@ -73,7 +73,7 @@ OPTIONS:
 Where the provided arguments correspond to the needed information to connect into PostgreSQL database. There are also
 default values to the arguments. The following line contains an example invocation of the executable:
 
-	python guy.py -h 127.0.0.1 -p 5432 -U user -w password -d mydb
+	python gui.py -h 127.0.0.1 -p 5432 -U user -w password -d mydb
 
 Connection can be also done from the graphical user interface.
 	
