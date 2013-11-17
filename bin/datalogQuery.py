@@ -24,7 +24,7 @@ def datalogQuery():
         results = datalog.getParsingOf(string_to_parse)
         print(results.contentToString())
         
-        	 #
+        	 # Ephrem Berhe
 		# Transform string into columns name separatd with commas.
 def getTermList(TermList):
       for term in TermList:
@@ -39,11 +39,11 @@ def getTermList(TermList):
 	else 
       for cont in ConstantList:
 	       Constats += cont +","
-	   
-    return Constats
+    LastConst = " Where " + Constats	   
+    return LastConst
 	
 for rslt in results:
-	Query="CREATE VIEW vista AS SELECT " + getTermList(rslt.terms) + " From "+ rslt.predicate + getConstantList(ConstantList)	
+	Query="CREATE VIEW "+rslt.predicate+" AS SELECT " + getTermList(rslt.terms) + " From "+ rslt.predicate + getConstantList(ConstantList)	
     print Query	
 		
  print Query
