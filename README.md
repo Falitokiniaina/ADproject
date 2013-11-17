@@ -21,12 +21,11 @@ To be edited later on. According to our level of achievement.
 # Installation instructions
 
 Dependecies
-In order to compile this software, it is necessary to have the following software installed in the machine;
-- Ocaml 4.0.0
-- PostgreSQL 9.0
-- Postgresql-ocaml 2.0.1
-- findlib 1.3.1
-- GNU Make 3.81
+In order to run this software, it is necessary to have the following libraries installed in the machine:
+- ply (Python Lex-Yacc)
+- psycopg2 (PostgreSQL connection driver) 
+- sqlalchemy (SQL toolkit)
+The last version of these libraries can be easily intalled using pip (Python Package Index)
 
 Pre-requisites
 For running YADI it is necessary to have a connection to PostgreSQL database.
@@ -59,51 +58,48 @@ Documentation for YADI is available online via link(s).
 
 # Usage – operating instructions
 
+$python guy.py
+
+(TODO)
 The usage of the generated executable files is the following one:
 OPTIONS:
-- h host	: Database server host (default: "yadi")
+- h host	: Database server host (default: "localhost")
 - p port	: Database server port (default: "5432")
-- U user	: Database user (deafult: "yadi")
-- w password	: Database user password (default: empty)
-- d dbname	: Database name to connect to (default: "yadi")
-- db		: print debugging information
+- u user	: Database user (deafult: "root")
+- w password	: Database user password (default: root)
+- d dbname	: Database name to connect to (default: "adb")
 - f file	: read program from file
 - help		: Disply this list of options
 
 Where the provided arguments correspond to the needed information to connect into PostgreSQL database. There are also
 default values to the arguments. The following line contains an example invocation of the executable:
 
-./yadi -h 127.0.0.1 -p 5432 -U myuser -w secret -d mydb
-If the connection was correctly done, then the following line should show;
-yadi
+$python guy.py -h 127.0.0.1 -p 5432 -U user -w password -d mydb
+Connection can be also done from the graphical user interface.
 	
 
 # Requirements – configuration instructions
 
-The programming language is Python. It is available for any Win32/Linux/MacOSX box. 
+The programming language is Python 3. It is available for any Win32/Linux/MacOSX box. 
 
-PLY (Python Lex-Yacc) Datalog Parser
-
-Other ???
-
-These can be installed by PIP from PyPI
+A local or remote PostgreSQL database is needed.
 
 
 # Contributing and Contact
 
 Please feel free to send us feedback about forks, patches and any other kind. You can contact us via GitHub and also via email.
 
-Ivan Vukic: vukicivan@yahoo.com
-Ephrem Berhe Gebremariam: eepphhrreemm@gmail.com
-Marcello Benedetti: 4marcello@gmail.com
-Falitokiniaina Rabearison: r.falitokiniaina@gmail.com
-Kiril Sardjoski: kiril.sardjoski@gmail.com
-Reddy Aldino: redino26@gmail.com
+Ivan Vukic: vukicivan@yahoo.com 
+Ephrem Berhe Gebremariam: eepphhrreemm@gmail.com 
+Marcello Benedetti: 4marcello@gmail.com 
+Falitokiniaina Rabearison: r.falitokiniaina@gmail.com 
+Kiril Sardjoski: kiril.sardjoski@gmail.com 
+Reddy Aldino: redino26@gmail.com 
 
 
 # Credits and Aknowledgments
 
-ddd
+(TODO)
 
 
 # License
