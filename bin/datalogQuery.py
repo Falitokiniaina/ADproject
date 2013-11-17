@@ -23,3 +23,27 @@ def datalogQuery():
         # To get actual results uncomment this
         results = datalog.getParsingOf(string_to_parse)
         print(results.contentToString())
+        
+        	 #
+		# Transform string into columns name separatd with commas.
+def getTermList(TermList):
+      for term in TermList:
+	     if(term !='_')
+	       Terms += term +","
+	   
+    return Terms
+	
+	def getConstantList(ConstantList):
+	if len(ConstantList)==0
+	return ""
+	else 
+      for cont in ConstantList:
+	       Constats += cont +","
+	   
+    return Constats
+	
+for rslt in results:
+	Query="CREATE VIEW vista AS SELECT " + getTermList(rslt.terms) + " From "+ rslt.predicate + getConstantList(ConstantList)	
+    print Query	
+		
+ print Query
