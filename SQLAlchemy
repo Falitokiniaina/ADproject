@@ -1,0 +1,6 @@
+from sqlalchemy.sql import select
+s = select([Movies])
+result = conn.execute(s)
+result = conn.execute(s)  
+row = result.fetchone()
+print "title:", row['title'], "; director:", row['director']
