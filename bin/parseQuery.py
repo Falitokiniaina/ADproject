@@ -32,7 +32,7 @@ class Parser:
         #print self.debugfile, self.tabmodule
         # Build the lexer and parser
         lex.lex(
-                module=self,
+                module=self
                 #debug=self.debug
                 )
         yacc.yacc(
@@ -53,8 +53,33 @@ class Parser:
             if not 	string_to_parse: 
                 continue
             self.results = yacc.parse(string_to_parse)
+            
             # TESTS
-            print(self.results.contentToString())
+            # print(repr(self.results))    
+            
+            # Get the type of request (query or rule)
+            # Depending on the type we do a SELECT or a CREATE VIEW
+            self.requestType = self.results.type
+            print("Got type >>> " + self.requestType)
+            
+            # Get the head. 
+            # Head contain the name of the view.
+            # If type of request is query we get data from this view.
+            # If type of request is rule we create a new view.
+            self.requestHead = self.results.head
+            print("Got head > " + repr(self.requestHead))
+         
+            # Get the body. Body is a list of predicates and constraint we need for the WHERE clause
+            self.requestBody = self.results.body
+            print("Got body > " + repr(self.requestBody))
+            
+            # Get a predicate from the body
+            # We need to loop the predicates in order to create the WHERE clause
+            for predicate in self.requestBody:
+                print("\nGot a predicate.\n    Name >>>"+ repr(predicate.name))
+                # To use the terms use
+                print("    Terms >>>" + repr(predicate.terms))
+            
          
          
     # Parse a string
@@ -99,7 +124,7 @@ class Datalog(Parser):
     t_PREDICATE = r'[A-Z][a-zA-Z0-9_]*'
     t_UNDERSCORE = r'_'
     t_MINUS = r'-'
-    t_OPERATOR = r'[<>=](=)?'
+    t_OPERATOR = r'[!<>=](=)?'
     t_CONSTANT = r'"[^\"]*"'
     t_NUMBER = r'\d+'
        
@@ -123,32 +148,31 @@ class Datalog(Parser):
 
        
     ### PARSER RULES ###
-    def p_entrypoint(self, p):
-        '''entrypoint : statementlist'''
-        #p[0] = p[1]
-        p[0] = AST(p[1])
-        #p[0] = Node(None, p[1])
+    # def p_entrypoint(self, p):
+        # '''entrypoint : statementlist'''
+        # p[0] = AST(p[1])
     
-    def p_statementlist1(self, p):
-        '''statementlist : statementlist statement'''
-        p[0] = p[1] + [p[2]]
+    # def p_statementlist1(self, p):
+        # '''statementlist : statementlist statement'''
+        # p[0] = p[1] + [p[2]]
     
-    def p_statementlist2(self, p):
-        '''statementlist : statement'''
-        p[0] = [p[1]]
+    # def p_statementlist2(self, p):
+        # '''statementlist : statement'''
+        # p[0] = [p[1]]
     
     def p_statement(self, p):
         '''statement : rule 
                 | query'''
-        p[0] = p[1]	             
-	
+        #p[0] = p[1]	             
+        p[0] = p[1]
+    
     def p_rule(self, p):
         '''rule : head TURNSTILE body DOT'''
-        p[0] = Node(p[1], p[3])
+        p[0] = Tree(p[1], p[3], 'rule')
     
     def p_query(self, p):
         '''query : block DOT'''
-        p[0] = p[1]
+        p[0] = Tree(p[1], {}, 'query')
 	
     def p_head(self, p):
         '''head : block'''
@@ -190,7 +214,9 @@ class Datalog(Parser):
     
     def p_constraint(self, p):
         '''constraint : VARIABLE OPERATOR NUMBER'''
-        p[0] = Constraint(p[1] + p[2] + p[3])
+        # p[0] = Constraint(p[1] + p[2] + p[3])
+        p[0] = Predicate("constraint", p[1] + p[2] + p[3]) 
+ 
     
     def p_error(self, p):
         print ("Syntax error at '%s'" % p.value)
@@ -212,44 +238,28 @@ class Datalog(Parser):
         # self.getParsingOf(string_to_parse)
         # print(self.p)
          
-         
-# Superclass node
-class AST(object):
-    def __init__(self, nodes):
-        self.node = nodes       
-    def contentToString(self):
-        contentStr = "TREE: \n"
-        for node in self.node:
-            contentStr = contentStr + node.contentToString()
-        return contentStr   
-
-    
-class Node(object):
-    head = None
-    body = {}
-    def __init__(self, head=None, body=None):
+        
+class Tree(object):
+    def __init__(self, head={}, body={}, type=""):
         self.head = head 
         self.body = body
-    def contentToString(self):
-        contentStr = 'HEAD: ' + str(self.head.__dict__) + '\nBODY: '
-        for node in self.body:
-            contentStr = contentStr + node.contentToString()
-        return contentStr + '\n'        
-
+        self.type = type
+    def __repr__(self):
+        return "%r" % (self.__dict__)
         
 class Predicate(object):
-    def __init__(self, predicate, terms):
-        self.predicate = predicate 
+    def __init__(self, name, terms):
+        self.name = name
         self.terms = terms
-    def contentToString(self):
-        return str(self.__dict__)
+    def __repr__(self):
+        return "%r" % (self.__dict__)
     
     
-class Constraint(object):
-    def __init__(self, constraint):
-        self.constraint = constraint
-    def contentToString(self):
-        return  str(self.__dict__)
+# class Constraint(object):
+    # def __init__(self, constraint):
+        # self.constraint = constraint
+    # def __repr__(self):
+        # return "%r" % (self.__dict__)
         
          
 # For standalone use  
