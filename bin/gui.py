@@ -5,9 +5,12 @@ Last modify:
 """
 
 import optparse
-from connect import connect
+from connect import getConnection
 from datalogQuery import datalogQuery
+from translator import getTranslation
 
+### GLOBAL VARIABLES ###
+sql_session = None
 
 ### FUNCTIONS ###
 
@@ -20,6 +23,55 @@ def main():
     options, arguments = p.parse_args()
     print ('Hello %s' % options.person)
 
+    
+def connect():
+    hostname = 'localhost'
+    port = '5432'
+    username = 'postgres'
+    password = 'root'
+    dbname = 'adb'
+    connection_string = 'postgresql+psycopg2://' + username + ':' + password + '@' + hostname + ':' + port + '/' + dbname
+    print('\nDefault connection string is:\n%s\n' % connection_string)
+    answer = input('Would you like to change that settings? [Y/N]\n> ')
+    
+    if answer.lower()=='y':
+        while True:
+            #insert parameters
+            hostname = input('\nPlease enter the PostgreSQL server name or IP address:\n> ')
+            port = input('\nPort:\n> ')
+            username = input('\nUsername:\n> ')
+            password = input('\nPassword:\n> ')
+            dbname = input('\nDatabase name:\n> ')
+           
+            if hostname and port and username and password and dbname:
+                connection_string = 'postgresql+psycopg2://' + username + ':' + password + '@' + hostname + ':' + port + '/' + dbname 
+                print('\nNew connection string:\n%s\n' % connection_string)
+                break
+            else:
+                print ('\nAll fields are mandatory.')
+  
+    global sql_session
+    sql_session = getConnection()
+    
+    
+
+def datalog():
+    if not sql_session:
+        print ('\nPlease connect to a database.')
+        return
+        
+    while 1:
+        try:
+            string_to_parse = input('\nInsert Datalog query:\n> ')
+        except EOFError:
+            break
+        if not string_to_parse: 
+            continue
+    
+        parsing_results = datalogQuery(string_to_parse)
+        getTranslation(sql_session, parsing_results)
+        
+        
     
 #This is a function we should implement later with an eventual query to test DB status...
 def status():
@@ -39,10 +91,11 @@ if __name__ == '__main__':
     options = {
             '1' : connect,
             '2' : status,
-            '3' : datalogQuery,
+            '3' : datalog,
             '4' : help,
             'q' : quit
         }
+
         
     print ('''
 ---------------------------------
