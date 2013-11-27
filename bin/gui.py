@@ -9,11 +9,13 @@ from connect import getConnection
 from datalogQuery import datalogQuery
 from translator import getTranslation
 
+
 ### GLOBAL VARIABLES ###
 sql_session = None
 
-### FUNCTIONS ###
 
+
+### FUNCTIONS ###
 # This is for execution options from command line
 # In this example I've found, if you write 
 # "python gui.py --person Marcello" it returns "Hello Marcello"
@@ -23,7 +25,9 @@ def main():
     options, arguments = p.parse_args()
     print ('Hello %s' % options.person)
 
-    
+
+
+#This function returns a connection object
 def connect():
     hostname = 'localhost'
     port = '5432'
@@ -32,7 +36,7 @@ def connect():
     dbname = 'adb'
     connection_string = 'postgresql+psycopg2://' + username + ':' + password + '@' + hostname + ':' + port + '/' + dbname
     print('\nDefault connection string is:\n%s\n' % connection_string)
-    answer = input('Would you like to change that settings? [Y/N]\n> ')
+    answer = input("Would you like to use this setting? [Y/N] > ")
     
     if answer.lower()=='y':
         while True:
@@ -51,10 +55,11 @@ def connect():
                 print ('\nAll fields are mandatory.')
   
     global sql_session
-    sql_session = getConnection()
+    sql_session = getConnection(connection_string)
     
     
-
+    
+#This function asks for a datalog query, parses it and returns the results 
 def datalog():
     if not sql_session:
         print ('\nPlease connect to a database.')
@@ -62,16 +67,17 @@ def datalog():
         
     while 1:
         try:
-            string_to_parse = input('\nInsert Datalog query:\n> ')
+            string_to_parse = input('\nInsert Datalog query or rule.\n> ')
         except EOFError:
             break
         if not string_to_parse: 
             continue
-    
+        
         parsing_results = datalogQuery(string_to_parse)
         getTranslation(sql_session, parsing_results)
+        ## PRINT FUNCTION HERE##
         
-        
+      
     
 #This is a function we should implement later with an eventual query to test DB status...
 def status():
@@ -85,9 +91,21 @@ def help():
 
     
 ### MAIN SECTION ###
-
 if __name__ == '__main__':
+
+    #welcome message
+    print ('''
+---------------------------------
+       Welcome to YADI 2
+---------------------------------''')
+
+
+    #connection 
+    if not sql_session:
+        connect()
+     
     
+    #user menu
     options = {
             '1' : connect,
             '2' : status,
@@ -95,13 +113,7 @@ if __name__ == '__main__':
             '4' : help,
             'q' : quit
         }
-
         
-    print ('''
----------------------------------
-       Welcome to YADI 2
----------------------------------''')
-    
     choice_text = '''
 What would you like to do?
  1. connect to a database
@@ -111,12 +123,10 @@ What would you like to do?
  q. quit :(
 
 > '''
-
+  
     while True:
         choice = input(choice_text)
         if choice in options:
             options[choice]()
         else:
             print ('Option unavailable\n')
-
-

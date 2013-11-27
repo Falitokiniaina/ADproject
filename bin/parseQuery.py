@@ -219,8 +219,11 @@ class Datalog(Parser):
  
     
     def p_error(self, p):
-        print ("Syntax error at '%s'" % p.value)
-
+        if p and p.value:
+            print ("Syntax error at '%s'" % p.value)
+        else:
+            print ("Syntax error")
+        
     # TEST Lex and Yacc
     # def runTests(self, string_to_parse):
         # print("\n### STRING TO PARSE ###\n%s" % string_to_parse)
