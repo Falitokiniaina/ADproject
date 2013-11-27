@@ -11,8 +11,8 @@ CREATE TABLE Actor (
     Name TEXT PRIMARY KEY NOT NULL,
     LastName TEXT NOT NULL ,
     title_movie TEXT NOT NULL , 
-    CONSTRAINT fk_movie_and_title FOREIGN KEY(title_movie) 
-    REFERENCES title_movie(title)
+    -- CONSTRAINT fk_movie_and_title FOREIGN KEY(title_movie) 
+    -- REFERENCES title_movie(title)
 );
 
 
