@@ -1,134 +1,184 @@
- """ 
-Graphical (?) interface for YADI2
-Last modify:
-	Marcello 12/11/2013
-"""
-# Create table first which has two or more attributs and the you have define it in the body ex if you have a table 
-#named B(x,y) colus make it like Q(x,y):-B(x,y). this will create view in the database
-
-import optparse
-from connect import getConnection
-from datalogQuery import datalogQuery
-from translator import getTranslation
-
-
-### GLOBAL VARIABLES ###
-sql_session = None
-
-
-
-### FUNCTIONS ###
-# This is for execution options from command line
-# In this example I've found, if you write 
-# "python gui.py --person Marcello" it returns "Hello Marcello"
-def main():
-    p = optparse.OptionParser()
-    p.add_option('--person', '-p', default="world")
-    options, arguments = p.parse_args()
-    print ('Hello %s' % options.person)
-
-
-
-#This function returns a connection object
-def connect():
-    hostname = 'localhost'
-    port = '5432'
-    username = 'postgres'
-    password = 'root'
-    dbname = 'adb'
-    connection_string = 'postgresql+psycopg2://' + username + ':' + password + '@' + hostname + ':' + port + '/' + dbname
-    print('\nDefault connection string is:\n%s\n' % connection_string)
-    answer = input("Would you like to use this setting? [Y/N] > ")
+import psycopg2
+import sys
+def getTranslation(sql_session, parsing_result):
+	viewName=''
+	#selectStat='CREATE OR REPLACE VIEW Ephrem AS  SELECT "Actor"."Name", "Actor"."LastName", "Actor".title_movie  FROM "Actor";'
+	selectStat=Translated(parsing_result)
+	whereClouse=''
+	#print (selectStat)
+	if('CREATE' in selectStat):
+	 CreateViews(sql_session,selectStat)
+	else:
+	 DisplayData(selectStat,sql_session)
+	print('Succssfully Done !')
+	
+	
+              
+    #
+ 
     
-    if answer.lower()=='y':
-        while True:
-            #insert parameters
-            hostname = input('\nPlease enter the PostgreSQL server name or IP address:\n> ')
-            port = input('\nPort:\n> ')
-            username = input('\nUsername:\n> ')
-            password = input('\nPassword:\n> ')
-            dbname = input('\nDatabase name:\n> ')
-           
-            if hostname and port and username and password and dbname:
-                connection_string = 'postgresql+psycopg2://' + username + ':' + password + '@' + hostname + ':' + port + '/' + dbname 
-                print('\nNew connection string:\n%s\n' % connection_string)
-                break
-            else:
-                print ('\nAll fields are mandatory.')
-  
-    global sql_session
-    sql_session = getConnection(connection_string)
-    
-    
-    
-#This function asks for a datalog query, parses it and returns the results 
-def datalog():
-    if not sql_session:
-        print ('\nPlease connect to a database.')
-        return
-        
-    while 1:
-        try:
-            string_to_parse = input('\nInsert Datalog query or rule.\n> ')
-        except EOFError:
-            break
-        if not string_to_parse: 
-            continue
-        
-        parsing_results = datalogQuery(string_to_parse)
-        getTranslation(sql_session, parsing_results)
-        ## PRINT FUNCTION HERE##
-        
-      
-    
-#This is a function we should implement later with an eventual query to test DB status...
-def status():
-    print('\n### Status goes here ###')
-    
-		
-#Also the help has to be done later
-def help():
-    print ('\n### Help goes here ###')
 
+# Ephrem Berhe
+# Transform string into columns name separatd with commas.
+def getTermList(TermList):
+    for term in TermList:
+        if(term !='_'):
+            Terms += term +","
+    return Terms
 
     
-### MAIN SECTION ###
-if __name__ == '__main__':
+def getConstantList(ConstantList):
 
-    #welcome message
-    print ('''
----------------------------------
-       Welcome to YADI 2
----------------------------------''')
+    if len(ConstantList)==0:
+        return ""
+    else: 
+        for cont in ConstantList:
+            Constats += cont +","
+            LastConst = " Where " + Constats	   
+    return LastConst
 
+    for rslt in results:
+        Query="CREATE VIEW "+rslt.predicate+" AS SELECT " + getTermList(rslt.terms) + " From "+ rslt.predicate + getConstantList(ConstantList)	
+        #print (Query)	
 
-    #connection 
-    if not sql_session:
-        connect()
+		#Creat view here
+def CreateViews(sqlsession,selectStat):
+
      
-    
-    #user menu
-    options = {
-            '1' : connect,
-            '2' : status,
-            '3' : datalog,
-            '4' : help,
-            'q' : quit
-        }
-        
-    choice_text = '''
-What would you like to do?
- 1. connect to a database
- 2. check the status of a database
- 3. a Datalog query
- 4. I need help...
- q. quit :(
-
-> '''
+     sqlsession.execute(selectStat)
+      
+     sqlsession.commit()
+def DisplayData(sql,Con):
   
-    while True:
-        choice = input(choice_text)
-        if choice in options:
-            options[choice]()
-        else:
-            print ('Option unavailable\n')
+ cursr.execute(sql)
+  
+ print(R) 
+   
+def QueryType(selectStat):
+ #print('Query type called here')
+ if(selectStat):
+  if (selectStat.head):
+   resultHead=selectStat.head
+    
+   # get the first part of the query 
+   viewname=resultHead.name
+   
+    
+   terms=repr(resultHead.terms)
+   Term=GetTerms(terms,'')
+   Term=Term[1:len(Term)-1]
+       
+ Qr='Select '+ ' '+ Term + ' From '+ viewname
+ Qr=Qr.replace("'",'')
+  
+ return Qr
+  
+ 
+ 
+
+	 # get the datalog header names and number attributes to create view
+def GetHeaderName(resultHead):
+
+	#get name of the header
+	 name=repr(resultHead.name)
+	 #name=name[1:len(name)-1]
+	 #get list of attributs names
+	 Term=""
+	 terms=repr(resultHead.terms)
+	 Term=GetTerms(terms,'')
+	 Term=Term[1:len(Term)-1] 
+	 
+	 Q='CREATE OR REPLACE VIEW '+name+' AS  SELECT ' + Term +' From '
+	 #print('Header '+Q)
+	 return Q
+def GetTerms(terms,trm):
+
+ Term=""
+ if(trm==''):
+  i=0
+  while i<len(terms):
+   Term=Term+terms[i]
+   i=i+1
+#remove the last comma
+ else:
+  i=0
+  while i<len(terms):
+   Term=Term+trm[0]+'.'+terms[i]
+   i=i+1
+  
+  
+  #Term=Term[1: len(Term)-1]
+  
+ return Term
+
+	 #Length of the body to check if there are more than one predicates in the body
+def BodyLength(requestBody):
+ #print(len(requestBody))
+ return len(requestBody)
+ 
+ #multiple body or Predicates
+def MultipleBody(requestBody):
+	body=""
+	names=""
+	criteria=""
+	TempRequestBody=requestBody
+ # get name of the predicates in the body
+	for bodyNames in requestBody:
+		names=names+repr(bodyNames.name)+","
+	AllTerms=""
+	for bodyAtt in TempRequestBody:
+		AllTerms=AllTerms +repr(bodyAtt.name)+','
+	AllTerms=AllTerms[:len(AllTerms)-1]
+  
+	return AllTerms
+ #print("all attributs in the body"+ AllTerms)
+  
+	 
+def GetPredicateBody(resultBody):
+	B=""
+	#for predicate with only one predicate in the body
+	if(BodyLength(resultBody)==1):
+		B=repr(resultBody[0].name)
+		#print('B is the only one using indexing')
+		#print(B)
+	else:
+		print('More than two predicates not implemented Comming soooooooon')
+		#for predicates with multiple predicate n the body going on.. not done
+		B=MultipleBody(resultBody)
+		#print('One or more predicates here ')
+		#print(B)
+	return B
+	
+
+
+
+def Translated(results):
+	if(results):
+		 
+		 if(results.type):
+			 type=results.type
+		 if(type=='query'):
+		     QueryPrct=results
+		     #print('\n----------------TYPE-------------------------------------------\n'+type)
+			 
+		     return QueryType(QueryPrct)
+		    
+			 
+			 
+			 #print(type)
+		 if (results.head):
+			 resultHead=results.head
+			 # get the first part of the query
+			 PreQuery=GetHeaderName(resultHead)
+			 #print(PreQuery)
+		 if (results.body):
+		     resultBody=results.body
+		     PostQuery=GetPredicateBody(resultBody)
+		     
+		 TotalQuery=PreQuery+' ' +PostQuery
+		 TotalQuery=TotalQuery.replace("'",'')
+		 #print (TotalQuery)
+	return TotalQuery
+			 			 		
+		
+	  
