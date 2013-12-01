@@ -96,7 +96,7 @@ class Datalog(Parser):
     
     ### TOKENIZER RULES ####
     # Tokens' names
-    reserved = {'and' : 'AND'}
+    reserved = {'and' : 'AND', 'not' : 'NOT'}
     tokens = [
         'TURNSTILE',    #:-
         'DOT',          #.
@@ -108,7 +108,7 @@ class Datalog(Parser):
         'VARIABLE',     #x
         'PREDICATE',    #Student
         'UNDERSCORE',   #_
-        'MINUS',         #-
+        #'MINUS',         #-
         'OPERATOR',     #>
         'CONSTANT'      #"something"             
     ] + list(reserved.values())
@@ -123,12 +123,17 @@ class Datalog(Parser):
     t_VARIABLE = r'[a-z][a-z]*'
     t_PREDICATE = r'[A-Z][a-zA-Z0-9_]*'
     t_UNDERSCORE = r'_'
-    t_MINUS = r'-'
+    #t_MINUS = r'-'
     t_OPERATOR = r'[!<>=](=)?'
     t_CONSTANT = r'"[^\"]*"'
     t_NUMBER = r'\d+'
        
     def t_AND(self, t):
+        r'[a-z][a-z]*'
+        t.type = self.reserved.get(t.value,'VARIABLE')    # Check for reserved words
+        return t
+        
+    def t_NOT(self, t):
         r'[a-z][a-z]*'
         t.type = self.reserved.get(t.value,'VARIABLE')    # Check for reserved words
         return t
@@ -196,7 +201,11 @@ class Datalog(Parser):
   
     def p_block(self, p):
         '''block : PREDICATE LEFT_PAR atomlist RIGHT_PAR'''
-        p[0] = Predicate(p[1], p[3])
+        p[0] = Predicate(p[1], p[3], False)
+        
+    def p_negatedblock(self, p):
+        '''block : NOT PREDICATE LEFT_PAR atomlist RIGHT_PAR'''
+        p[0] = Predicate(p[2], p[4], True)
     
     def p_atomlist1(self, p):
         '''atomlist : atomlist COMMA atom'''
@@ -215,7 +224,7 @@ class Datalog(Parser):
     def p_constraint(self, p):
         '''constraint : VARIABLE OPERATOR NUMBER'''
         # p[0] = Constraint(p[1] + p[2] + p[3])
-        p[0] = Predicate("constraint", p[1] + p[2] + p[3]) 
+        p[0] = Predicate("constraint", p[1] + p[2] + p[3], False) # no negation on the constraints 
  
     
     def p_error(self, p):
@@ -251,9 +260,10 @@ class Tree(object):
         return "%r" % (self.__dict__)
         
 class Predicate(object):
-    def __init__(self, name, terms):
+    def __init__(self, name="", terms={}, isNegated=""):
         self.name = name
         self.terms = terms
+        self.isNegated = isNegated
     def __repr__(self):
         return "%r" % (self.__dict__)
     

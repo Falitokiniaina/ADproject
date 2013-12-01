@@ -74,8 +74,12 @@ def datalog():
             continue
         
         parsing_results = datalogQuery(string_to_parse)
-        getTranslation(sql_session, parsing_results)
-        ## PRINT FUNCTION HERE##
+        
+        if parsing_results == "error":
+            print("\nParsing error. Please check datalog query format.")
+        else: 
+            getTranslation(sql_session, parsing_results)
+            ## PRINT FUNCTION HERE##
         
       
     

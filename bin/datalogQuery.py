@@ -18,28 +18,35 @@ def datalogQuery(string_to_parse = ''):
     # Get the type of request (query or rule)
     # Depending on the type we do a SELECT or a CREATE VIEW
     if results:
-        if results.type:
-            requestType =  results.type
-            print("Got type >>> " +  requestType)
+        requestType =  results.type
+        print("\nTYPE") 
+        print("    " + requestType)
         
         # Get the head. 
         # Head contain the name of the view.
         # If type of request is query we get data from this view.
         # If type of request is rule we create a new view.
-        if results.head:
-            requestHead = results.head
-            print("Got head > " + repr(requestHead))
+        requestHead = results.head
+        # Head is not iterable...only one predicate is there
+        print("\nHEAD")
+        print("    Name: "+ requestHead.name)
+        print("    Terms: ") 
+        for term in requestHead.terms:
+            print("        " + term)
      
-        # Get the body. Body is a list of predicates and constraint we need for the WHERE clause
-        if results.body:
-            requestBody = results.body
-            print("Got body > " + repr(requestBody))
-        
-        # Get a predicate from the body
+        # Get the body. Body is a list of predicates and constraint we need for the WHERE clause    
         # We need to loop the predicates in order to create the WHERE clause
-            for predicate in requestBody:
-                print("\nGot a predicate.\n    Name >>>"+ repr(predicate.name))
-                # To use the terms use
-                print("    Terms >>>" + repr(predicate.terms))
+        requestBody = results.body
+        print("\nBODY")
+        for predicate in requestBody:
+            print("    Name: "+ predicate.name)
+            print("    Is negated? " + repr(predicate.isNegated))  # use repr() to print a boolean value! 
+            print("    Terms: ") 
+            for term in predicate.terms:
+                print("        " + term)
+            print("\n")
 
         return results
+    
+    else:
+        return "error" 
