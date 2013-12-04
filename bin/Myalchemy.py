@@ -15,8 +15,8 @@
 from sqlalchemy import MetaData, create_engine
 from sqlalchemy.schema import Table
 
-class Myalchemy(object):
-    """Cette classe permet d interrgair avec une base de donnees"""
+class Myalchemy(object):    
+    """ This class allows to interact with the DB"""
     
     #def __init__(self, datas):    
         #self.url = "%(type)s://%(user)s:%(pass)s@%(host)s:%(port)s/%(name)s" % datas
@@ -31,15 +31,15 @@ class Myalchemy(object):
         self.connection.close()    
                     
     def getAllTables(self):
-        """Retourne la liste des tables de la base"""
+        """ Returns the list of the tables of the DB"""        
         return self.meta.sorted_tables        
 
     def getTable(self, table_name):
-        """Retourne l objet table correspondant a la table table_name"""
+        """ Returns the object table corresponding to the table table_name """        
         return Table(table_name, self.meta, autoload=True)
 
     def getAttrOfTable(self, table_name):
-        """Retourne les attributs de la table table_name"""
+        """ Returns the attributes of the table table_name """        
         table = self.getTable(table_name)
         attrs = []
         for attr in Table(table_name, self.meta, autoload=True).c:
@@ -47,14 +47,14 @@ class Myalchemy(object):
         return attrs
     
     def getPrimaryOfTable(self, table_name):
-        """Retourne la cle primaire d'une table"""
+        """ Returns the primary key of a table """        
         table = self.getTable(table_name)
         for attr in table.c:
             if attr.primary_key:
                 return attr.name
 
     def getForeignOfTable(self, table_name):
-        """Retourne les cles etrangeres d'une table"""
+        """ Returns the foreign keys of a table """            
         table = self.getTable(table_name)
         foreigns = []
         for attr in table.foreign_keys:
@@ -64,19 +64,19 @@ class Myalchemy(object):
         return foreigns
     
     def getAllOfTable(self, table_name):
-        """Retourne tout les elements d une table"""
+        """ Returns all the elements of a table"""                
         table = self.getTable(table_name)
         result = self.engine.execute(table.select())
         return result.fetchall()
     
     def getCountOfTable(self, table_name):
-        """Retourne le nombre d elements d une table"""
+        """ Returns the number of elements of a table """        
         table = self.getTable(table_name)
         result = self.engine.execute(table.count())
         return result.fetchone()[0]
     
     def getRowOfTableWithPrimaryVal(self, table_name, row_id_val):
-        """Retourne le nombre d elements d une table"""
+        """ Returns the number of elements of a table"""        
         table = self.getTable(table_name)
         row_id_name = self.getPrimaryOfTable(table_name)[1]
         for attr in table.c:
