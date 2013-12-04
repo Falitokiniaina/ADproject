@@ -5,11 +5,11 @@
 
 #datas = {
 #    "host": "localhost", 
-#    "port": "3306",
-#    "type": "mysql", 
-#    "user": "root",
-#    "pass": "",
-#    "name": "msn",
+#    "port": "5432",
+#    "type": "postgresql", 
+#    "user": "postgres",
+#    "pass": "postgres",
+#    "name": "adb",
 #}
 
 from sqlalchemy import MetaData, create_engine
