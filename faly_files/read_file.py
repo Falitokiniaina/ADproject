@@ -32,9 +32,11 @@ def scriptFile():
            
 #list existing files
 def list():
-    #print('\n### list goes here ###')
-    for nomfich in glob.glob("../faly/*.*"):
-       print (nomfich)
+    #print('\n list goes here ')
+    print ("list of files in '../faly_files/script/' : ")
+    for nomfich in glob.glob("../faly_files/script/*.*"):
+        nomfich = nomfich.split("\\")
+        print (nomfich[1])
 #FIN list existing files       
                  
 #write a script file
@@ -59,11 +61,11 @@ def write():
 def writeFile(fileName,prg):
     print("saving file")
     #check if the file exists already
-    if os.path.isfile("../faly/" + fileName):
+    if os.path.isfile("../faly_files/script/" + fileName):
         overwrite = input("The file exists already, overwrite it? [Y/N]:")
         if overwrite.lower()=='y':
             try:
-                file = open("../faly\/"+fileName, "w")
+                file = open("../faly_files\/script\/"+fileName, "w")
                 file.write(prg)
                 file.close
                 print("file saved")
@@ -72,7 +74,7 @@ def writeFile(fileName,prg):
         else:
             print("file not saved!")
     else:
-        file = open("../faly\/"+fileName, "w")
+        file = open("../faly_files/script/"+fileName, "w")
         file.write(prg)
         file.close
         print("file saved")        
@@ -81,7 +83,8 @@ def writeFile(fileName,prg):
     
 #display a script file
 def display():
-    path = input('Which file to display? [path]:')
+    path = input('Which file to display? :')
+    path = "../faly_files/script/"+path
     try:
         file = open(path, "r")
            # go through the lines and treat them
@@ -100,7 +103,8 @@ def display():
     
 def excecute():
     #print('\n### excecute goes here ###')
-    path = input('Which file to run? [path]:')
+    path = input('Which file to run? :')
+    path = "../faly_files/script/"+path
     try:
         file = open(path, "r")
            # go through the lines and treat them

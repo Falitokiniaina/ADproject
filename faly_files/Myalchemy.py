@@ -18,21 +18,21 @@ from sqlalchemy.schema import Table
 class Myalchemy(object):
     """Cette classe permet d interrgair avec une base de donnees"""
     
-    def __init__(self, datas):
-        self.url = "%(type)s://%(user)s:%(pass)s@%(host)s:%(port)s/%(name)s" % datas
+    #def __init__(self, datas):    
+        #self.url = "%(type)s://%(user)s:%(pass)s@%(host)s:%(port)s/%(name)s" % datas
+    def __init__(self, connection_string):
+        self.url = connection_string
         self.meta = MetaData()
         self.engine = create_engine(self.url)
         self.meta.reflect(bind=self.engine)
         self.connection = self.engine.connect()
         
     def __del__(self):
-        self.connection.close()
-    
+        self.connection.close()    
+                    
     def getAllTables(self):
         """Retourne la liste des tables de la base"""
-        #return self.meta.sorted_tables
-        for table in self.meta.sorted_tables:
-            print (table)
+        return self.meta.sorted_tables        
 
     def getTable(self, table_name):
         """Retourne l objet table correspondant a la table table_name"""

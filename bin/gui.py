@@ -8,10 +8,15 @@ import optparse
 from connect import getConnection
 from datalogQuery import datalogQuery
 from translator import getTranslation
+import sys
+sys.path.append('../faly_files/')
+from read_file import scriptFile
+from checkConnect import checkConnect
 
 
 ### GLOBAL VARIABLES ###
 sql_session = None
+connection_string = None
 
 
 
@@ -28,12 +33,13 @@ def main():
 
 
 #This function returns a connection object
-def connect():
+def connect():		
     hostname = 'localhost'
     port = '5432'
     username = 'postgres'
-    password = 'root'
+    password = 'postgres'
     dbname = 'adb'
+    global connection_string
     connection_string = 'postgresql+psycopg2://' + username + ':' + password + '@' + hostname + ':' + port + '/' + dbname
     print('\nDefault connection string is:\n%s\n' % connection_string)
     answer = input("Would you like to use this setting? [Y/N] > ")
@@ -47,7 +53,7 @@ def connect():
             password = input('\nPassword:\n> ')
             dbname = input('\nDatabase name:\n> ')
            
-            if hostname and port and username and password and dbname:
+            if hostname and port and username and password and dbname:              	      	            	
                 connection_string = 'postgresql+psycopg2://' + username + ':' + password + '@' + hostname + ':' + port + '/' + dbname 
                 print('\nNew connection string:\n%s\n' % connection_string)
                 break
@@ -85,8 +91,8 @@ def datalog():
     
 #This is a function we should implement later with an eventual query to test DB status...
 def status():
-    print('\n### Status goes here ###')
-    
+    #print('\n### Status goes here ###') -> in checkConnect.py
+    checkConnect(sql_session,connection_string)
     
 #Also the help has to be done later
 def help():
@@ -115,6 +121,7 @@ if __name__ == '__main__':
             '2' : status,
             '3' : datalog,
             '4' : help,
+            '5' : scriptFile,
             'q' : quit
         }
         
@@ -124,6 +131,7 @@ What would you like to do?
  2. check the status of a database
  3. a Datalog query
  4. I need help...
+ 5. script Files,
  q. quit :(
 
 > '''
