@@ -8,8 +8,6 @@ import optparse
 from connect import getConnection
 from datalogQuery import datalogQuery
 from translator import getTranslation
-import sys
-sys.path.append('../faly_files/')
 from read_file import scriptFile
 from checkConnect import checkConnect
 

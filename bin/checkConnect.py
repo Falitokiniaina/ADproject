@@ -1,5 +1,3 @@
-import sys
-sys.path.append('../faly_files/')
 from Myalchemy import Myalchemy
 
 def checkConnect(sql_session,connection_string):
@@ -24,7 +22,7 @@ def checkConnect(sql_session,connection_string):
                 print("\n")                
                 print (table)    
                 print (postgresalchemy.getAttrOfTable(str(table)))
-                print (postgresalchemy.getAllOfTable(str(table)))
+                #print (postgresalchemy.getAllOfTable(str(table)))
                                      
             #print (postgresalchemy.getAttrOfTable("actor"))
             #print (postgresalchemy.getTable("actor"))
