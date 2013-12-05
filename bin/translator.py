@@ -1,184 +1,66 @@
 import psycopg2
 import sys
 def getTranslation(sql_session, parsing_result):
-	viewName=''
-	#selectStat='CREATE OR REPLACE VIEW Ephrem AS  SELECT "Actor"."Name", "Actor"."LastName", "Actor".title_movie  FROM "Actor";'
-	selectStat=Translated(parsing_result)
-	whereClouse=''
-	#print (selectStat)
-	if('CREATE' in selectStat):
-	 CreateViews(sql_session,selectStat)
-	else:
-	 DisplayData(selectStat,sql_session)
-	print('Succssfully Done !')
+ CreateViews(sql_session, parsing_result)
+ print('View Succssfully Created !')
 	
 	
-              
-    #
- 
-    
+def CountBody(requestBody):
+ Count=0;
+ for predicate in requestBody:
+  Count=Count+1
+ return Count
+def GetTableName(requestBody):
+ TableName=""
+ for predicate in requestBody:
+  TableName=predicate.name
+ return TableName
 
-# Ephrem Berhe
-# Transform string into columns name separatd with commas.
-def getTermList(TermList):
-    for term in TermList:
-        if(term !='_'):
-            Terms += term +","
-    return Terms
-
-    
-def getConstantList(ConstantList):
-
-    if len(ConstantList)==0:
-        return ""
-    else: 
-        for cont in ConstantList:
-            Constats += cont +","
-            LastConst = " Where " + Constats	   
-    return LastConst
-
-    for rslt in results:
-        Query="CREATE VIEW "+rslt.predicate+" AS SELECT " + getTermList(rslt.terms) + " From "+ rslt.predicate + getConstantList(ConstantList)	
-        #print (Query)	
-
-		#Creat view here
-def CreateViews(sqlsession,selectStat):
-
-     
-     sqlsession.execute(selectStat)
-      
-     sqlsession.commit()
-def DisplayData(sql,Con):
-  
- cursr.execute(sql)
-  
- print(R) 
-   
-def QueryType(selectStat):
- #print('Query type called here')
- if(selectStat):
-  if (selectStat.head):
-   resultHead=selectStat.head
-    
-   # get the first part of the query 
-   viewname=resultHead.name
+	# new codes
+def ExecuteQuery(sqlsession,selectStat):
+    sqlsession.execute(selectStat)
+    sqlsession.commit()
+	 
+def CreateViews(sqlcon, results):
+   if results:
+        requestType =  results.type
+        
+        
+        # Get the head. 
+        # Head contain the name of the view.
+        # If type of request is query we get data from this view.
+        # If type of request is rule we create a new view.
+        requestHead = results.head
+        # Head is  one predicate 
+        #print("\----------------------------------------- New One")
+        ViewName=requestHead.name
+        HeadTerms="" 
+        for term in requestHead.terms:
+             HeadTerms=HeadTerms + term +','
+        HeadTerms=HeadTerms[:len(HeadTerms)-1]
+        CreateView= 'CREATE VIEW '+' '+ ViewName +' ' +' AS Select '+HeadTerms +' From '
+		
+        
+        requestBody = results.body
+        TotalBody=CountBody(requestBody)
+        if(TotalBody==1):
+            #print('One Header Only')
+            FromTable=GetTableName(requestBody)
+            CreateView=CreateView +' '+ FromTable
+            ExecuteQuery(sqlcon,CreateView)
+	     
+        #print(CreateView)
+		
+        #print("\nBODY")
+        #for predicate in requestBody:
+         #   print("    Name: "+ predicate.name)
+          #  print("    Is negated? " + repr(predicate.isNegated))  # use repr() to print a boolean value! 
+           # print("    Terms: ") 
+            #for term in predicate.terms:
+             #   print("        " + term)
+            #print("\n")
    
     
-   terms=repr(resultHead.terms)
-   Term=GetTerms(terms,'')
-   Term=Term[1:len(Term)-1]
-       
- Qr='Select '+ ' '+ Term + ' From '+ viewname
- Qr=Qr.replace("'",'')
-  
- return Qr
-  
- 
- 
-
-	 # get the datalog header names and number attributes to create view
-def GetHeaderName(resultHead):
-
-	#get name of the header
-	 name=repr(resultHead.name)
-	 #name=name[1:len(name)-1]
-	 #get list of attributs names
-	 Term=""
-	 terms=repr(resultHead.terms)
-	 Term=GetTerms(terms,'')
-	 Term=Term[1:len(Term)-1] 
-	 
-	 Q='CREATE OR REPLACE VIEW '+name+' AS  SELECT ' + Term +' From '
-	 #print('Header '+Q)
-	 return Q
-def GetTerms(terms,trm):
-
- Term=""
- if(trm==''):
-  i=0
-  while i<len(terms):
-   Term=Term+terms[i]
-   i=i+1
-#remove the last comma
- else:
-  i=0
-  while i<len(terms):
-   Term=Term+trm[0]+'.'+terms[i]
-   i=i+1
-  
-  
-  #Term=Term[1: len(Term)-1]
-  
- return Term
-
-	 #Length of the body to check if there are more than one predicates in the body
-def BodyLength(requestBody):
- #print(len(requestBody))
- return len(requestBody)
- 
- #multiple body or Predicates
-def MultipleBody(requestBody):
-	body=""
-	names=""
-	criteria=""
-	TempRequestBody=requestBody
- # get name of the predicates in the body
-	for bodyNames in requestBody:
-		names=names+repr(bodyNames.name)+","
-	AllTerms=""
-	for bodyAtt in TempRequestBody:
-		AllTerms=AllTerms +repr(bodyAtt.name)+','
-	AllTerms=AllTerms[:len(AllTerms)-1]
-  
-	return AllTerms
- #print("all attributs in the body"+ AllTerms)
-  
-	 
-def GetPredicateBody(resultBody):
-	B=""
-	#for predicate with only one predicate in the body
-	if(BodyLength(resultBody)==1):
-		B=repr(resultBody[0].name)
-		#print('B is the only one using indexing')
-		#print(B)
-	else:
-		print('More than two predicates not implemented Comming soooooooon')
-		#for predicates with multiple predicate n the body going on.. not done
-		B=MultipleBody(resultBody)
-		#print('One or more predicates here ')
-		#print(B)
-	return B
-	
-
-
-
-def Translated(results):
-	if(results):
-		 
-		 if(results.type):
-			 type=results.type
-		 if(type=='query'):
-		     QueryPrct=results
-		     #print('\n----------------TYPE-------------------------------------------\n'+type)
-			 
-		     return QueryType(QueryPrct)
-		    
-			 
-			 
-			 #print(type)
-		 if (results.head):
-			 resultHead=results.head
-			 # get the first part of the query
-			 PreQuery=GetHeaderName(resultHead)
-			 #print(PreQuery)
-		 if (results.body):
-		     resultBody=results.body
-		     PostQuery=GetPredicateBody(resultBody)
-		     
-		 TotalQuery=PreQuery+' ' +PostQuery
-		 TotalQuery=TotalQuery.replace("'",'')
-		 #print (TotalQuery)
-	return TotalQuery
 			 			 		
 		
 	  
