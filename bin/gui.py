@@ -5,11 +5,13 @@ Last modify:
 """
 
 import optparse
-from connect import getConnection
-from datalogQuery import datalogQuery
+from dbConnect import getConnection
+from dbStatus import getStatus
+from loopTree import printParsing
 from translator import getTranslation
-from read_file import scriptFile
-from checkConnect import checkConnect
+from scripting import *
+from parsing import Datalog
+
 
 
 ### GLOBAL VARIABLES ###
@@ -40,35 +42,37 @@ def connect():
     global connection_string
     connection_string = 'postgresql+psycopg2://' + username + ':' + password + '@' + hostname + ':' + port + '/' + dbname
     print('\nDefault connection string is:\n%s\n' % connection_string)
-    answer = input("Would you like to use this setting? [Y/N] > ")
-    
-    if answer.lower()=='y':
+    answer = input("Would you like to use this setting? [Y/N] > ")   
+    if answer.lower()=='n':
         while True:
-            #insert parameters
+            #Input connection parameters
             hostname = input('\nPlease enter the PostgreSQL server name or IP address:\n> ')
             port = input('\nPort:\n> ')
             username = input('\nUsername:\n> ')
             password = input('\nPassword:\n> ')
-            dbname = input('\nDatabase name:\n> ')
-           
+            dbname = input('\nDatabase name:\n> ')      
             if hostname and port and username and password and dbname:              	      	            	
                 connection_string = 'postgresql+psycopg2://' + username + ':' + password + '@' + hostname + ':' + port + '/' + dbname 
                 print('\nNew connection string:\n%s\n' % connection_string)
                 break
             else:
                 print ('\nAll fields are mandatory.')
-  
     global sql_session
     sql_session = getConnection(connection_string)
     
+   
+   
+#This function returns the status of the connection and prints out the schema
+def status():
+    getStatus(sql_session,connection_string)
+   
     
     
-#This function asks for a datalog query, parses it and returns the results 
+#This function asks the user for a datalog query 
 def datalog():
     if not sql_session:
         print ('\nPlease connect to a database.')
-        return
-        
+        return     
     while 1:
         try:
             string_to_parse = input('\nInsert Datalog query or rule.\n> ')
@@ -76,27 +80,82 @@ def datalog():
             break
         if not string_to_parse: 
             continue
-        
-        parsing_results = datalogQuery(string_to_parse)
-        
-        if parsing_results == "error":
-            print("\nParsing error. Please check datalog query format.")
-        else: 
-            getTranslation(sql_session, parsing_results)
-            ## PRINT FUNCTION HERE##
-        
-      
+        execute(string_to_parse)
+       
+       
+
+# Display the scripting menu
+def script():
+    if not sql_session:
+        print ('\nPlease connect to a database.')
+        return
+    options = {
+            '1' : listScript,
+            '2' : writeScript,
+            '3' : displayScript,
+            '4' : runScript
+        }
+    choice_text = '''
+Scripting menu:
+ 1. list existing files
+ 2. write a script
+ 3. display a script
+ 4. execute a script
+ b. back
+ 
+> '''
+    while True:
+       choice = input(choice_text)
+       if choice=='b': break
+       if choice in options:
+            options[choice]()
+       else:
+           print ('Option unavailable\n')  
     
-#This is a function we should implement later with an eventual query to test DB status...
-def status():
-    #print('\n### Status goes here ###') -> in checkConnect.py
-    checkConnect(sql_session,connection_string)
+
+
+# Run a script file line by line
+def runScript():
+    path = input('Enter file to run:\n> ')
+    path = "script_files/"+path
+    try:
+        file = open(path, "r")
+        for line in file:
+            if line.strip():
+                print("Executing " + line)
+                execute(line.strip())
+        file.close()        
+    except FileNotFoundError:
+        print("File not found!")
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+
+   
+
+# The function which does all the job
+def execute(string_to_parse=''):
+    #Parsing
+    datalog = Datalog()
+    parsing_results = datalog.getParsingOf(string_to_parse)
+    if parsing_results == "error":
+        print("\nParsing error. Please check datalog query format.")
+        return False
+        
+    #Print parsing for debug
+    printParsing(parsing_results)
     
-#Also the help has to be done later
+    #Translation into SQL 
+    translation_results = getTranslation(sql_session, parsing_results)
+    
+    #Pretty print the results
+    #printing(translation_results)
+    
+    
+    
+# The help has to be done later
 def help():
-    print ('\n### Help goes here ###')
-
-
+    print ('\n### Help goes here ###') 
+  
     
 ### MAIN SECTION ###
 if __name__ == '__main__':
@@ -118,18 +177,18 @@ if __name__ == '__main__':
             '1' : connect,
             '2' : status,
             '3' : datalog,
-            '4' : help,
-            '5' : scriptFile,
+            '4' : script,
+            '5' : help,
             'q' : quit
         }
         
     choice_text = '''
 What would you like to do?
  1. connect to a database
- 2. check the status of a database
- 3. a Datalog query
- 4. I need help...
- 5. script Files,
+ 2. check the status of the database
+ 3. Datalog query
+ 4. run a script file
+ 5. I need help...
  q. quit :(
 
 > '''

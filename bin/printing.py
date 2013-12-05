@@ -1,7 +1,6 @@
 from pprint import pprint
 
-from connect import getConnection
-from datalogQuery import datalogQuery
+from dbConnect import getConnection
 from translator import getTranslation
 
 _all_ = ["pprint","pformat"]
