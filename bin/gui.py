@@ -11,12 +11,14 @@ from loopTree import printParsing
 from translator import getTranslation
 from scripting import *
 from parsing import Datalog
+from Myalchemy import Myalchemy
 
 
 
 ### GLOBAL VARIABLES ###
 sql_session = None
 connection_string = None
+global db
 
 
 
@@ -37,7 +39,7 @@ def connect():
     hostname = 'localhost'
     port = '5432'
     username = 'postgres'
-    password = 'root'
+    password = 'postgres'
     dbname = 'adb'
     global connection_string
     connection_string = 'postgresql+psycopg2://' + username + ':' + password + '@' + hostname + ':' + port + '/' + dbname
@@ -59,9 +61,15 @@ def connect():
                 print ('\nAll fields are mandatory.')
     global sql_session
     sql_session = getConnection(connection_string)
-    
-   
-   
+    if sql_session:
+    	postgresalchemy = Myalchemy(connection_string)    	
+    	db = postgresalchemy.getDBSchema()
+    	#print(db['actor'][0]) -> name
+    	#print(db['actor'][1]) -> lastname
+    	#print(db['movies'][0]) -> title
+    	#print(db['Q'][0]) -> Key Error
+		
+      
 #This function returns the status of the connection and prints out the schema
 def status():
     getStatus(sql_session,connection_string)
