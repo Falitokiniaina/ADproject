@@ -48,7 +48,8 @@ def CreateViews(sqlcon, results):
             FromTable=GetTableName(requestBody)
             CreateView=CreateView +' '+ FromTable
             ExecuteQuery(sqlcon,CreateView)
-	     
+        if(TotalBody>1):
+            print('Multiple Body coming soon')
         #print(CreateView)
 		
         #print("\nBODY")
