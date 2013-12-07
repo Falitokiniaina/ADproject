@@ -28,7 +28,7 @@ class Myalchemy(object):
         self.connection = self.engine.connect()
         
     def __del__(self):
-        self.connection.close()    
+        self.connection.close()                                   
                     
     def getAllTables(self):
         """ Returns the list of the tables of the DB"""        
@@ -82,4 +82,13 @@ class Myalchemy(object):
         for attr in table.c:
             if attr.name == row_id_name:
                 result = self.engine.execute(table.select(attr == row_id_val))
-        return result.fetchone()        
+        return result.fetchone()       
+
+    def getDBSchema(self):
+        """ Returns a dictionary of a dictionary to translate eg actor[0] -> name """
+        db={}
+        alltables = self.getAllTables()                        
+        for table in alltables:        
+            db[str(table)] = self.getAttrOfTable(str(table))                                
+        #print(db)
+        return db    
