@@ -57,25 +57,10 @@ Documentation for YADI is available online via link(s).
 
 	python gui.py
 
-(TODO)
 
-The usage of the generated executable files is the following one:
-
-OPTIONS:
-- h host	: Database server host (default: "localhost")
-- p port	: Database server port (default: "5432")
-- u user	: Database user (deafult: "root")
-- w password	: Database user password (default: root)
-- d dbname	: Database name to connect to (default: "adb")
-- f file	: read program from file
-- help		: Disply this list of options
-
-Where the provided arguments correspond to the needed information to connect into PostgreSQL database. There are also
-default values to the arguments. The following line contains an example invocation of the executable:
-
-	python gui.py -h 127.0.0.1 -p 5432 -U user -w password -d mydb
-
-Connection can be also done from the graphical user interface.
+Connection to the database can be done from the graphical user interface.
+Default connection string:
+postgresql+psycopg2://postgres:root@localhost:5432/adb
 	
 
 # Contributing and Contact
