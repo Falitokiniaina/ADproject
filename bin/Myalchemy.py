@@ -32,7 +32,11 @@ class Myalchemy(object):
                     
     def getAllTables(self):
         """ Returns the list of the tables of the DB"""        
-        return self.meta.sorted_tables        
+        return self.meta.sorted_tables   
+    
+    def getAllViews(self):
+        """ Returns the list of the views of the DB"""        
+        return self.meta.sorted_tables            
 
     def getTable(self, table_name):
         """ Returns the object table corresponding to the table table_name """        
