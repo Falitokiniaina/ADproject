@@ -1,66 +1,80 @@
 import psycopg2
 import sys
-def getTranslation(sql_session, parsing_result):
- CreateViews(sql_session, parsing_result)
- print('View Succssfully Created !')
-	
-	
-def CountBody(requestBody):
- Count=0;
- for predicate in requestBody:
-  Count=Count+1
- return Count
-def GetTableName(requestBody):
- TableName=""
- for predicate in requestBody:
-  TableName=predicate.name
- return TableName
 
-	# new codes
-def ExecuteQuery(sqlsession,selectStat):
-    sqlsession.execute(selectStat)
-    sqlsession.commit()
-	 
-def CreateViews(sqlcon, results):
-   if results:
-        requestType =  results.type
+### GLOBAL VARIABLES ###
+db_schema = None
+
+
+def getTranslation(schema, parsing_result):
+    if not parsing_result: return None
+    global db_schema
+    db_schema = schema
+    if parsing_result.type=='rule':
+        statement = CreateViews(parsing_result)
+    elif parsing_result.type=='query':
+        statement = CreateSelect(parsing_result)
+    return statement
         
         
-        # Get the head. 
-        # Head contain the name of the view.
-        # If type of request is query we get data from this view.
-        # If type of request is rule we create a new view.
-        requestHead = results.head
-        # Head is  one predicate 
-        #print("\----------------------------------------- New One")
-        ViewName=requestHead.name
-        HeadTerms="" 
-        for term in requestHead.terms:
-             HeadTerms=HeadTerms + term +','
-        HeadTerms=HeadTerms[:len(HeadTerms)-1]
-        CreateView= 'CREATE VIEW '+' '+ ViewName +' ' +' AS Select '+HeadTerms +' From '
-		
-        
-        requestBody = results.body
-        TotalBody=CountBody(requestBody)
-        if(TotalBody==1):
-            #print('One Header Only')
-            FromTable=GetTableName(requestBody)
-            CreateView=CreateView +' '+ FromTable
-            ExecuteQuery(sqlcon,CreateView)
-	     
-        #print(CreateView)
-		
-        #print("\nBODY")
-        #for predicate in requestBody:
-         #   print("    Name: "+ predicate.name)
-          #  print("    Is negated? " + repr(predicate.isNegated))  # use repr() to print a boolean value! 
-           # print("    Terms: ") 
-            #for term in predicate.terms:
-             #   print("        " + term)
-            #print("\n")
-   
+### CREATE SELECT ###  
+def CreateSelect(results):
+    # t(X,Y).
+    # SELECT t.name, t.lastname FROM t 
+    predicate = results.head
+    statement = 'SELECT '
+    for term in predicate.terms:
+       index = predicate.terms.index(term)
+       statement = statement + db_schema[predicate.name][index] + ', '
+    statement = statement[:-2] + ' FROM ' + predicate.name + ';'
+    return statement
+
     
-			 			 		
-		
-	  
+    
+### CREATE VIEW ###  
+def CreateViews(results):
+    # q(X,Y):-actor(X,Y,Z) and movie(Z,_).
+    # CREATE VIEW q AS SELECT actor.name, actor.lastname FROM actor 
+    # JOIN movie ON actor.title=movie.title 
+    statement = 'CREATE VIEW '+ results.head.name +' AS SELECT ' + CreateViews_SelectPart(results) + 'FROM '
+    for predicate in results.body:
+        statement = statement + predicate.name + ', '
+    statement = statement[:-2] + ' WHERE ' + CreateViews_WherePart(results) + ';'
+    return statement    
+        
+#Build the select clause for a view 
+def CreateViews_SelectPart(Tree):
+    toSelect = ''
+    allTheTerms = []
+    for toSearch in Tree.head.terms:
+        for predicate in Tree.body:
+            if toSearch in predicate.terms:
+                if toSearch not in allTheTerms:
+                    allTheTerms.append(toSearch)
+                    index = predicate.terms.index(toSearch)
+                    toSelect = toSelect + predicate.name + '.' + db_schema[predicate.name][index] + ', '
+    return toSelect[:-2] + ' '  
+    
+#Build the where clause 
+def CreateViews_WherePart(Tree):
+    where = ''
+    allTheTerms = [] 
+    for predicate in Tree.body:
+        for term in predicate.terms:
+            if term not in allTheTerms:
+                allTheTerms.append(term)
+                #print(term+ '    ')
+                listOcc = getPredicatesContainingTerm(Tree, term)
+                lastElm =  listOcc.pop()
+                indexLastElm = lastElm.terms.index(term)
+                for elm in listOcc:
+                    index = elm.terms.index(term)
+                    where = where + elm.name + '.' +  db_schema[elm.name][index] + '=' + lastElm.name + '.' +  db_schema[lastElm.name][indexLastElm] + ' and '
+    return where[:-5] + ' '
+    
+#returns a list of tables where term occour
+def getPredicatesContainingTerm(Tree, term):
+    listOcc = []
+    for predicate in Tree.body:
+        if term in predicate.terms:
+            listOcc.append(predicate)
+    return listOcc 
