@@ -4,6 +4,7 @@ Last modify:
 	Marcello 12/11/2013
 """
 
+import sys, traceback
 import optparse
 from dbConnect import getConnection
 from dbStatus import getStatus
@@ -18,7 +19,7 @@ from Myalchemy import Myalchemy
 ### GLOBAL VARIABLES ###
 sql_session = None
 connection_string = None
-global db
+db_schema = None
 
 
 
@@ -62,13 +63,14 @@ def connect():
     global sql_session
     sql_session = getConnection(connection_string)
     if sql_session:
-    	postgresalchemy = Myalchemy(connection_string)    	
-    	db = postgresalchemy.getDBSchema()
-    	#print(db['actor'][0]) -> name
-    	#print(db['actor'][1]) -> lastname
-    	#print(db['movies'][0]) -> title
-    	#print(db['Q'][0]) -> Key Error
-		
+        postgresalchemy = Myalchemy(connection_string)    	
+        global db_schema
+        db_schema = postgresalchemy.getDBSchema()
+        #print(db['actor'][0]) -> name
+        #print(db['actor'][1]) -> lastname
+        #print(db['movies'][0]) -> title
+        #print(db['Q'][0]) -> Key Error
+        
       
 #This function returns the status of the connection and prints out the schema
 def status():
@@ -78,7 +80,7 @@ def status():
     
 #This function asks the user for a datalog query 
 def datalog():
-    if not sql_session:
+    if not sql_session or not db_schema:
         print ('\nPlease connect to a database.')
         return     
     while 1:
@@ -141,25 +143,49 @@ def runScript():
    
 
 # The function which does all the job
-def execute(string_to_parse=''):
+def execute(string_to_parse):
+    
     #Parsing
     datalog = Datalog()
     parsing_results = datalog.getParsingOf(string_to_parse)
     if parsing_results == "error":
         print("\nParsing error. Please check datalog query format.")
         return False
-        
-    #Print parsing for debug
+    #Print parsing for debug 
     printParsing(parsing_results)
     
+    
     #Translation into SQL 
-    translation_results = getTranslation(sql_session, parsing_results)
+    translation_results = getTranslation(db_schema, parsing_results)
+    if not translation_results:
+        print("\nTranslation error.")
+        return False
+    #Print translation for debug
+    print("SQL: " + translation_results)
+  
     
-    #Pretty print the results
-    #printing(translation_results)
-    
-    
-    
+    #Execute query in Postgresql
+    try:
+        postgres_results = sql_session.execute(translation_results)   
+    except:
+        print("Error:", sys.exc_info()[0])
+        traceback.print_exc(file=sys.stdout) 
+        return False
+    finally:
+        sql_session.commit()     
+     
+    #Print results    
+    if parsing_results.type=='query' and postgres_results:
+        try:
+            for row in postgres_results:
+                print (row)
+        except:
+            print("Error:", sys.exc_info()[0])
+            traceback.print_exc(file=sys.stdout) 
+            return False
+    print('Done!\n')
+
+        
 # The help has to be done later
 def help():
     print ('\n### Help goes here ###') 
