@@ -13,6 +13,7 @@ from translator import getTranslation
 from scripting import *
 from parsing import Datalog
 from Myalchemy import Myalchemy
+from utility import *
 
 
 
@@ -33,6 +34,9 @@ def main():
     options, arguments = p.parse_args()
     print ('Hello %s' % options.person)
 
+def Cleaning():
+ CleaningViews(connection_string,sql_session)
+ quit()
 
 
 #This function returns a connection object
@@ -66,7 +70,12 @@ def connect():
         postgresalchemy = Myalchemy(connection_string)    	
         global db_schema
         db_schema = postgresalchemy.getDBSchema()
-        #print(postgresalchemy.getAllViews()) -> ['view1'] OR ['view1', 'view2']
+        #print('---------------------------\n')
+        #viewObjects=postgresalchemy.getAllViews()
+        #for v in viewObjects:
+        #    print(v)
+         #   print('\n -----------')
+        #print(postgresalchemy.getAllViews())
         #print(db['actor'][0]) -> name
         #print(db['actor'][1]) -> lastname
         #print(db['movies'][0]) -> title
@@ -214,7 +223,7 @@ if __name__ == '__main__':
             '3' : datalog,
             '4' : script,
             '5' : help,
-            'q' : quit
+            'q' : Cleaning
         }
         
     choice_text = '''
