@@ -24,15 +24,21 @@ class Myalchemy(object):
         self.url = connection_string
         self.meta = MetaData()
         self.engine = create_engine(self.url)
-        self.meta.reflect(bind=self.engine)
+        self.meta.reflect(bind=self.engine,views=True)
         self.connection = self.engine.connect()
         
+        self.dialect = self.engine.dialect        
+        
+    def getAllViews(self):
+        """ Returns the list of the views of the DB"""
+        return self.dialect.get_view_names(self.connection)
+                
     def __del__(self):
         self.connection.close()                                   
                     
     def getAllTables(self):
         """ Returns the list of the tables of the DB"""        
-        return self.meta.sorted_tables        
+        return self.meta.sorted_tables               
 
     def getTable(self, table_name):
         """ Returns the object table corresponding to the table table_name """        

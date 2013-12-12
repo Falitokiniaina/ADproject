@@ -66,6 +66,7 @@ def connect():
         postgresalchemy = Myalchemy(connection_string)    	
         global db_schema
         db_schema = postgresalchemy.getDBSchema()
+        #print(postgresalchemy.getAllViews()) -> ['view1'] OR ['view1', 'view2']
         #print(db['actor'][0]) -> name
         #print(db['actor'][1]) -> lastname
         #print(db['movies'][0]) -> title
