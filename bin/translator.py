@@ -1,14 +1,11 @@
 import psycopg2
 import sys
 
-### GLOBAL VARIABLES ###
-db_schema = None
+import globvar
 
 
-def getTranslation(schema, parsing_result):
+def getTranslation(parsing_result):
     if not parsing_result: return None
-    global db_schema
-    db_schema = schema
     if parsing_result.type=='rule':
         statement = CreateViews(parsing_result)
     elif parsing_result.type=='query':
@@ -24,7 +21,7 @@ def CreateSelect(results):
     statement = 'SELECT '
     for term in predicate.terms:
        index = predicate.terms.index(term)
-       statement = statement + db_schema[predicate.name][index] + ', '
+       statement = statement + globvar.db_schema[predicate.name][index] + ', '
     statement = statement[:-2] + ' FROM ' + predicate.name + ';'
     return statement
 
@@ -35,10 +32,13 @@ def CreateViews(results):
     # q(X,Y):-actor(X,Y,Z) and movie(Z,_).
     # CREATE VIEW q AS SELECT actor.name, actor.lastname FROM actor 
     # JOIN movie ON actor.title=movie.title 
-    statement = 'CREATE VIEW '+ results.head.name +' AS SELECT ' + CreateViews_SelectPart(results) + 'FROM '
+    statement = 'CREATE VIEW '+ results.head.name +' AS SELECT ' + CreateViews_SelectPart(results) + ' FROM '
     for predicate in results.body:
         statement = statement + predicate.name + ', '
-    statement = statement[:-2] + ' WHERE ' + CreateViews_WherePart(results) + ';'
+    statement = statement[:-2]
+    wherePart = CreateViews_WherePart(results)
+    if wherePart:
+        statement = statement + ' WHERE ' + wherePart + ';'
     return statement    
         
 #Build the select clause for a view 
@@ -51,8 +51,8 @@ def CreateViews_SelectPart(Tree):
                 if toSearch not in allTheTerms:
                     allTheTerms.append(toSearch)
                     index = predicate.terms.index(toSearch)
-                    toSelect = toSelect + predicate.name + '.' + db_schema[predicate.name][index] + ', '
-    return toSelect[:-2] + ' '  
+                    toSelect = toSelect + predicate.name + '.' + globvar.db_schema[predicate.name][index] + ', '
+    return toSelect[:-2]  
     
 #Build the where clause 
 def CreateViews_WherePart(Tree):
@@ -68,8 +68,8 @@ def CreateViews_WherePart(Tree):
                 indexLastElm = lastElm.terms.index(term)
                 for elm in listOcc:
                     index = elm.terms.index(term)
-                    where = where + elm.name + '.' +  db_schema[elm.name][index] + '=' + lastElm.name + '.' +  db_schema[lastElm.name][indexLastElm] + ' and '
-    return where[:-5] + ' '
+                    where = where + elm.name + '.' +  globvar.db_schema[elm.name][index] + '=' + lastElm.name + '.' +  globvar.db_schema[lastElm.name][indexLastElm] + ' and '
+    return where[:-5]
     
 #returns a list of tables where term occour
 def getPredicatesContainingTerm(Tree, term):

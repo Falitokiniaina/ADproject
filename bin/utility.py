@@ -2,20 +2,21 @@ import psycopg2
 import sys
 from Myalchemy import Myalchemy
  
+import globvar
 
-def CleaningViews(connection_string,sql_sessionl):
+def CleaningViews():
      print('Cleaning...')
 	 
-     postgresalchemy = Myalchemy(connection_string)    	
+     postgresalchemy = Myalchemy(globvar.connection_string)    	
      print('---------------------------\n')
      viewObjects=postgresalchemy.getAllViews()
      hasViews=0
      for v in viewObjects:
           dropView='DROP VIEW '+ v
-          sql_sessionl.execute(dropView)
+          globvar.sql_session.execute(dropView)
           hasViews=hasViews+1		  
           print('\n Cleaning ...')
      		  
      if hasViews>0 :
-          sql_sessionl.commit()
+          globvar.sql_session.commit()
      print('Cleaning Done. ')

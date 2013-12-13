@@ -1,7 +1,6 @@
 from pprint import pprint
 
-from dbConnect import getConnection
-from translator import getTranslation
+import globvar
 
 _all_ = ["pprint","pformat"]
 

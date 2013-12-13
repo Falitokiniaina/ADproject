@@ -1,10 +1,13 @@
 from Myalchemy import Myalchemy
 
-def getStatus(sql_session, connection_string):
+import globvar
+
+def getStatus():
+    #def getStatus(globvar.sql_session, connection_string):
     #print('\n### Status goes here ###')
     #try:
-        if  sql_session:
-            print("You are connected to:\n" + connection_string)
+        if  globvar.sql_session:
+            print("You are connected to:\n" + globvar.connection_string)
            # datas = {
            #     "host": "localhost", 
            #     "port": "5432",
@@ -13,7 +16,7 @@ def getStatus(sql_session, connection_string):
            #     "pass": "postgres",
            #     "name": "adb",
            # }            
-            postgresalchemy = Myalchemy(connection_string)            
+            postgresalchemy = Myalchemy(globvar.connection_string)
             alltables = postgresalchemy.getAllTables()
             print("\nDB SCHEMA")
             #print (alltables)
@@ -37,4 +40,9 @@ def getStatus(sql_session, connection_string):
             print ("You are not connected!")
    # except:
     #    print("Unexpected error:", sys.exc_info()[0])  
-        
+      
+      
+def updateDbSchemaVar():
+    postgresalchemy = Myalchemy(globvar.connection_string)
+    #global db_schema
+    globvar.db_schema = postgresalchemy.getDBSchema()

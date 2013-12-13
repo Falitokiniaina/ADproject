@@ -2,6 +2,8 @@ import sys
 import glob
 import os.path
 
+import globvar
+
            
 #list existing files
 def listScript():

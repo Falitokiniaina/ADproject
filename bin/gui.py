@@ -7,7 +7,7 @@ Last modify:
 import sys, traceback
 import optparse
 from dbConnect import getConnection
-from dbStatus import getStatus
+from dbStatus import *
 from loopTree import printParsing
 from translator import getTranslation
 from scripting import *
@@ -18,9 +18,12 @@ from utility import *
 
 
 ### GLOBAL VARIABLES ###
-sql_session = None
-connection_string = None
-db_schema = None
+import globvar
+""" Usage:
+        globvar.sql_session
+        globvar.connection_string
+        globvar.db_schema 
+"""
 
 
 
@@ -34,63 +37,34 @@ def main():
     options, arguments = p.parse_args()
     print ('Hello %s' % options.person)
 
-def Cleaning():
- CleaningViews(connection_string,sql_session)
- quit()
+
+#Clean the views and quit the application
+def cleaning():
+    CleaningViews()
+    quit()
 
 
 #This function returns a connection object
-def connect():		
-    hostname = 'localhost'
-    port = '5432'
-    username = 'postgres'
-    password = 'root'
-    dbname = 'adb'
-    global connection_string
-    connection_string = 'postgresql+psycopg2://' + username + ':' + password + '@' + hostname + ':' + port + '/' + dbname
-    print('\nDefault connection string is:\n%s\n' % connection_string)
-    answer = input("Would you like to use this setting? [Y/N] > ")   
-    if answer.lower()=='n':
-        while True:
-            #Input connection parameters
-            hostname = input('\nPlease enter the PostgreSQL server name or IP address:\n> ')
-            port = input('\nPort:\n> ')
-            username = input('\nUsername:\n> ')
-            password = input('\nPassword:\n> ')
-            dbname = input('\nDatabase name:\n> ')      
-            if hostname and port and username and password and dbname:              	      	            	
-                connection_string = 'postgresql+psycopg2://' + username + ':' + password + '@' + hostname + ':' + port + '/' + dbname 
-                print('\nNew connection string:\n%s\n' % connection_string)
-                break
-            else:
-                print ('\nAll fields are mandatory.')
-    global sql_session
-    sql_session = getConnection(connection_string)
-    if sql_session:
-        postgresalchemy = Myalchemy(connection_string)    	
-        global db_schema
-        db_schema = postgresalchemy.getDBSchema()
-        #print('---------------------------\n')
-        #viewObjects=postgresalchemy.getAllViews()
-        #for v in viewObjects:
-        #    print(v)
-         #   print('\n -----------')
-        #print(postgresalchemy.getAllViews())
-        #print(db['actor'][0]) -> name
-        #print(db['actor'][1]) -> lastname
-        #print(db['movies'][0]) -> title
-        #print(db['Q'][0]) -> Key Error
+def connect():	
+    getConnection()
+    if globvar.sql_session:
+        updateDbSchemaVar()
+        #print(db_schema['actor'][0]) -> name
+        #print(db_schema['actor'][1]) -> lastname
+        #print(db_schema['movies'][0]) -> title
+        #print(db_schema['Q'][0]) -> Key Error
         
+      
       
 #This function returns the status of the connection and prints out the schema
 def status():
-    getStatus(sql_session,connection_string)
+    getStatus()
    
     
     
 #This function asks the user for a datalog query 
 def datalog():
-    if not sql_session or not db_schema:
+    if not globvar.sql_session or not globvar.db_schema:
         print ('\nPlease connect to a database.')
         return     
     while 1:
@@ -106,7 +80,7 @@ def datalog():
 
 # Display the scripting menu
 def script():
-    if not sql_session:
+    if not globvar.sql_session:
         print ('\nPlease connect to a database.')
         return
     options = {
@@ -166,7 +140,7 @@ def execute(string_to_parse):
     
     
     #Translation into SQL 
-    translation_results = getTranslation(db_schema, parsing_results)
+    translation_results = getTranslation(parsing_results)
     if not translation_results:
         print("\nTranslation error.")
         return False
@@ -176,15 +150,21 @@ def execute(string_to_parse):
     
     #Execute query in Postgresql
     try:
-        postgres_results = sql_session.execute(translation_results)   
+        postgres_results = globvar.sql_session.execute(translation_results)   
     except:
         print("Error:", sys.exc_info()[0])
         traceback.print_exc(file=sys.stdout) 
         return False
     finally:
-        sql_session.commit()     
+        globvar.sql_session.commit()     
      
-    #Print results    
+     
+    #Update globvar.db_schema variable if type=rule 
+    if parsing_results.type=='rule':    
+        updateDbSchemaVar()
+        
+     
+    #Print results if type=query    
     if parsing_results.type=='query' and postgres_results:
         try:
             for row in postgres_results:
@@ -204,6 +184,7 @@ def help():
 ### MAIN SECTION ###
 if __name__ == '__main__':
 
+    
     #welcome message
     print ('''
 ---------------------------------
@@ -212,7 +193,7 @@ if __name__ == '__main__':
 
 
     #connection 
-    if not sql_session:
+    if not globvar.sql_session:
         connect()
      
     
@@ -223,7 +204,7 @@ if __name__ == '__main__':
             '3' : datalog,
             '4' : script,
             '5' : help,
-            'q' : Cleaning
+            'q' : cleaning
         }
         
     choice_text = '''
