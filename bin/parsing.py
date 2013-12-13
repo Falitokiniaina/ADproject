@@ -185,9 +185,9 @@ class Datalog(Parser):
         # p[0] = Constraint(p[1] + p[2] + p[3])
         p[0] = Predicate("constraint", p[1] + p[2] + p[3], False) # no negation on the constraints 
  
-    def p_recursion(self, p):
-        '''query : block recursive_query DOT'''
-        p[0] = Tree(p[1], p[-1], 'query')
+    # def p_recursion(self, p):
+       #  '''query : block recursive_query DOT'''
+       #  p[0] = Tree(p[1], p[-1], 'query')
     
     def p_error(self, p):
         if p and p.value:
