@@ -94,7 +94,7 @@ def CreateViews_WherePart(Tree):
                 
                 #if term is a free variable _ it should be ignored
                 elif term == "_":
-                    break
+                    continue
                 
                 #else if term is a variable for example actor(X,Y), we have to loop the tree and search for the predicates that contain term 
                 elif term not in allTheTerms:

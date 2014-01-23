@@ -69,11 +69,13 @@ def datalog():
         return     
     while 1:
         try:
-            string_to_parse = input('\nInsert Datalog query or rule.\n> ')
+            string_to_parse = input('\nInsert Datalog query or rule (q to quit)\n> ')
         except EOFError:
             break
         if not string_to_parse: 
             continue
+        if string_to_parse == 'q':
+            break
         execute(string_to_parse)
        
        
