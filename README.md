@@ -42,12 +42,12 @@ Documentation for YADI is available online via link(s).
 
 
 # Example
-	A Datalog rule for the database { movie(Title,Director), actor(Name,Lastname,Title) } looks like this:
-		q(Y,Z) :- movie(X,Y) and actor(_,Z,X) and X!=shining.
-	Such rule create a view of movie.director and actor.lastname for all the movies except "Shining".
-	A Datalog query using the new rule would be:
-		q(kubrick,X).
-	Such query returns lastnames of all the actors who worked with "Kubrick" except in "Shining".
+A Datalog rule for the database { movie(Title,Director), actor(Name,Lastname,Title) } looks like this:
+	q(Y,Z) :- movie(X,Y) and actor(_,Z,X) and X!=shining.
+Such rule create a view of movie.director and actor.lastname for all the movies except "Shining".
+A Datalog query using the new rule would be:
+	q(kubrick,X).
+Such query returns lastnames of all the actors who worked with "Kubrick" except in "Shining".
 
 # Usage – operating instructions
 
