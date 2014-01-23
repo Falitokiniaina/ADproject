@@ -42,16 +42,12 @@ Documentation for YADI is available online via link(s).
 
 
 # Example
-	A Datalog query against {R(A,B), S(B,C,D)} database looks like this:
-		V(x,y) :- R(x,y) and S(y,_,_). 
-		Q(x,y) :- S(x,y,z) and V(z,t) and t>=3.
-		?- Q(x,y).
-	Where the two first lines define idb predicates and the third line provides the actual query, i.e. the idb of the result set.
-	The above Datalog query can be translated into the following SQL statement:
-		SELECT S2.B, S2.C 
-		FROM R, S S1, S S2  
-		WHERE R.B=S1.B AND R.A=S2.D AND S1.B>=3
-		
+	A Datalog rule for the database { movie(Title,Director), actor(Name,Lastname,Title) } looks like this:
+		q(Y,Z) :- movie(X,Y) and actor(_,Z,X) and X!=shining.
+	Such rule create a view of movie.director and actor.lastname for all the movies except "Shining".
+	A Datalog query using the new rule would be:
+		q(kubrick,X).
+	Such query returns lastnames of all the actors who worked with "Kubrick" except in "Shining".
 
 # Usage – operating instructions
 
