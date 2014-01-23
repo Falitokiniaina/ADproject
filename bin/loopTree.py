@@ -4,6 +4,8 @@ Last modify:
 	Marcello 12/11/2013
 """
 
+import dataStructures
+
 
 ### LOOPS FOR ACCESSING THE TREE###
 def printParsing(parsing_results):
@@ -40,11 +42,18 @@ def printParsing(parsing_results):
         requestBody = parsing_results.body
         print("\nBODY")
         for predicate in requestBody:
-            print("    Name: "+ predicate.name)
-            print("    Is negated? " + repr(predicate.isNegated))  # use repr() to print a boolean value! 
-            print("    Terms: ") 
-            for term in predicate.terms:
-                print("        " + term)
-            print("\n")
+            if isinstance(predicate, dataStructures.Predicate):
+                print("    Name: "+ predicate.name)
+                print("    Is negated? " + repr(predicate.isNegated))  # use repr() to print a boolean value! 
+                print("    Terms: ") 
+                for term in predicate.terms:
+                    print("        " + term)
+                print("\n")
 
+            elif isinstance(predicate, dataStructures.Constraint):
+                print("    TermX: "+ predicate.termX)
+                print("    Operator: " + predicate.operator) 
+                print("    TermY: " +predicate.termY) 
+                print("\n")
+            
         return parsing_results

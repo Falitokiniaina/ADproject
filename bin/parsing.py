@@ -1,7 +1,7 @@
 """ 
 Parser for Datalog queries
 Last modify:
-	Marcello and Fali 11/12/2013
+	Marcello 24/01/2013
 
 Python Lex & Yacc tutorial:
 http://www.dabeaz.com/ply/ply.html
@@ -11,6 +11,7 @@ import ply.lex as lex
 import ply.yacc as yacc
 import os
 
+from dataStructures import * 
 
 # Superclass for Datalog parser
 class Parser:
@@ -64,7 +65,6 @@ class Datalog(Parser):
         'LEFT_PAR',     #(
         'RIGHT_PAR',    #)
         'COMMA',        #,
-        'EQUALS',       #=
         'NUMBER',       #0-9
         'CONSTANT',      #something  
         'VARIABLE',     #X
@@ -77,15 +77,12 @@ class Datalog(Parser):
     t_DOT = r'\.'
     t_LEFT_PAR  = r'\('
     t_RIGHT_PAR  = r'\)'
-    t_COMMA = '\,'
-    t_EQUALS  = r'='
+    t_COMMA = r'\,'
     t_VARIABLE = r'[A-Z][a-z]*'
-    t_CONSTANT = r'[a-z][a-zA-Z0-9_]*'
+    t_CONSTANT = r'[a-z0-9][a-zA-Z0-9]*'
     t_UNDERSCORE = r'_'
     t_OPERATOR = r'[!<>=](=)?'
     t_NUMBER = r'\d+'
-    
-    #others:    t_MINUS = r'-' 
        
     def t_AND(self, t):
         r'[a-z][a-z]*'
@@ -112,18 +109,6 @@ class Datalog(Parser):
 
        
     ### PARSER RULES ###
-    # def p_entrypoint(self, p):
-        # '''entrypoint : statementlist'''
-        # p[0] = AST(p[1])
-    
-    # def p_statementlist1(self, p):
-        # '''statementlist : statementlist statement'''
-        # p[0] = p[1] + [p[2]]
-    
-    # def p_statementlist2(self, p):
-        # '''statementlist : statement'''
-        # p[0] = [p[1]]
-    
     def p_statement(self, p):
         '''statement : rule 
                 | query'''
@@ -174,16 +159,22 @@ class Datalog(Parser):
         '''atomlist : atom'''
         p[0] = [p[1]]
     
-    def p_atom(self, p):
-        '''atom : VARIABLE
-            | CONSTANT
+    def p_atomvariable(self, p):
+        '''atom : VARIABLE 
             | UNDERSCORE'''
         p[0] = p[1]
     
-    def p_constraint(self, p):
-        '''constraint : VARIABLE OPERATOR NUMBER'''
-        # p[0] = Constraint(p[1] + p[2] + p[3])
-        p[0] = Predicate("constraint", p[1] + p[2] + p[3], False) # no negation on the constraints 
+    def p_atomconstant(self, p):
+        '''atom : CONSTANT'''
+        p[0] = "\'" + p[1] + "\'"
+      
+    def p_constraintvariable(self, p):
+        '''constraint : VARIABLE OPERATOR VARIABLE'''
+        p[0] = Constraint(p[1], p[2], p[3]) 
+        
+    def p_constraintconstant(self, p):
+        '''constraint : VARIABLE OPERATOR CONSTANT'''
+        p[0] = Constraint(p[1], p[2], "\'"+p[3]+"\'")   
  
     # def p_recursion(self, p):
        #  '''query : block recursive_query DOT'''
@@ -194,46 +185,4 @@ class Datalog(Parser):
             print ("Syntax error at '%s'" % p.value)
         else:
             print ("Syntax error")
-        
-    # TEST Lex and Yacc
-    # def runTests(self, string_to_parse):
-        # print("\n### STRING TO PARSE ###\n%s" % string_to_parse)
-        # print("\n### TOKENS ###")
-        # lex.input(string_to_parse)
-        # while True:
-            # tok = lex.token()
-            # if not tok: 
-                # No more input
-                # break
-            # else:
-                # This prints type, value, lineno, tok.lexpos
-                # print (tok)
-        # print("\n### SINTAX TREE ###")
-        # self.getParsingOf(string_to_parse)
-        # print(self.p)
-         
-        
-class Tree(object):
-    def __init__(self, head={}, body={}, type=""):
-        self.head = head 
-        self.body = body
-        self.type = type
-    def __repr__(self):
-        return "%r" % (self.__dict__)
-     
-        
-class Predicate(object):
-    def __init__(self, name="", terms=[], isNegated=""):
-        self.name = name
-        self.terms = terms
-        self.isNegated = isNegated
-    def __repr__(self):
-        return "%r" % (self.__dict__)
-        
-        
-# class Constraint(object):
-    # def __init__(self, constraint):
-        # self.constraint = constraint
-    # def __repr__(self):
-        # return "%r" % (self.__dict__)
         
