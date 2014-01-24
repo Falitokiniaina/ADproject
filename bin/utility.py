@@ -5,6 +5,7 @@ from Myalchemy import Myalchemy
 import globvar
 
 def CleaningViews():
+
      print('Cleaning...')
 	 
      postgresalchemy = Myalchemy(globvar.connection_string)    	
@@ -20,3 +21,8 @@ def CleaningViews():
      if hasViews>0 :
           globvar.sql_session.commit()
      print('Cleaning Done. ')
+
+def SafeRule():
+	 print(" Check if the rule is safe or not The rule is not safe")
+	
+	
