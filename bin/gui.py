@@ -137,6 +137,21 @@ def execute(string_to_parse):
     if parsing_results == "error":
         print("\nParsing error. Please check datalog query format.")
         return False
+    #check if there relation is in database
+    relationExist=CheckRelationName(parsing_results)
+   
+    print(relationExist)
+    if 	relationExist=="Error":
+        print("\n There are no relations found in the database")
+        return False
+	
+	#Check if the query is safe
+    errorResult=SafeRule(parsing_results)
+     
+    if errorResult=="Error":
+        print("\n Rule not safe.")
+        return False
+	
     #Print parsing for debug 
     printParsing(parsing_results)
     
