@@ -22,7 +22,7 @@ class Parser:
     
     # Config Lex and Yacc
     def __init__(self, **kw):
-        #self.debug = kw.get('debug', 0)
+        self.debug = kw.get('debug', 0)
         self.results = {}
         try:
             modname = os.path.split(os.path.splitext(__file__)[0])[1] + "_" + self.__class__.__name__
@@ -33,11 +33,15 @@ class Parser:
         #print self.debugfile, self.tabmodule
         # Build the lexer and parser
         lex.lex(
-                module=self
+                module=self,
                 #debug=self.debug
+                optimize=True,
+                debug=False
                 )
         yacc.yacc(
                 module=self,
+                debug=False,
+                write_tables=False,
                 #debug=self.debug,
                 #debugfile=self.debugfile,
                 tabmodule=self.tabmodule
@@ -65,7 +69,7 @@ class Datalog(Parser):
         'LEFT_PAR',     #(
         'RIGHT_PAR',    #)
         'COMMA',        #,
-        'NUMBER',       #0-9
+        #'NUMBER',       #0-9
         'CONSTANT',      #something  
         'VARIABLE',     #X
         'UNDERSCORE',   #_
@@ -82,7 +86,7 @@ class Datalog(Parser):
     t_CONSTANT = r'[a-z0-9][a-zA-Z0-9]*'
     t_UNDERSCORE = r'_'
     t_OPERATOR = r'[!<>=](=)?'
-    t_NUMBER = r'\d+'
+    #t_NUMBER = r'\d+'
        
     def t_AND(self, t):
         r'[a-z][a-z]*'

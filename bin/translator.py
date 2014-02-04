@@ -17,15 +17,23 @@ def getTranslation(parsing_result):
 def CreateSelect(results):
     # t(X,Y).
     # SELECT t.name, t.lastname FROM t 
-    predicate = results.head
+    item = results.head
     statement = 'SELECT '
-    for term in predicate.terms:
-       index = predicate.terms.index(term)
-       statement = statement + globvar.db_schema[predicate.name][index] + ', '
-    statement = statement[:-2] + ' FROM ' + predicate.name + ';'
-    return statement
+    where = ''
+    for term in item.terms:
+       index = item.terms.index(term)
+       if term.startswith("'"):
+            index = item.terms.index(term)
+            where = where + item.name + '.' + globvar.db_schema[item.name][index] + '=' + term + ' and ' 
+       statement = statement + globvar.db_schema[item.name][index] + ', '
+    statement = statement[:-2] + ' FROM ' + item.name
+    if where:
+        statement = statement + ' WHERE ' + where[:-5]
+    return statement + ';'
 
-    
+         
+
+  
     
 ### CREATE VIEW ###  
 def CreateViews(results):

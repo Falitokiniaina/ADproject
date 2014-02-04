@@ -39,9 +39,9 @@ def main():
 
 
 #Clean the views and quit the application
-def cleaning():
-    CleaningViews()
-    quit()
+ # def cleaning():
+    #CleaningViews()
+    # quit()
 
 
 #This function returns a connection object
@@ -53,7 +53,7 @@ def connect():
         #print(db_schema['actor'][1]) -> lastname
         #print(db_schema['movies'][0]) -> title
         #print(db_schema['Q'][0]) -> Key Error
-        
+        CleaningViews()
       
       
 #This function returns the status of the connection and prints out the schema
@@ -134,23 +134,35 @@ def execute(string_to_parse):
     #Parsing
     datalog = Datalog()
     parsing_results = datalog.getParsingOf(string_to_parse)
-    if parsing_results == "error":
+    if not parsing_results or parsing_results == "error":
         print("\nParsing error. Please check datalog query format.")
         return False
-    #check if there relation is in database
-    relationExist=CheckRelationName(parsing_results)
-   
-    print(relationExist)
-    if 	relationExist=="Error":
-        print("\n There are no relations found in the database")
+    
+    #Check safety
+    if parsing_results.type=='rule':
+        if CheckRelationName(parsing_results)=="Error":
+            print("\nThere are no such relations in the database.")
+            return False     
+        elif CheckSafeRule(parsing_results)=="Error":
+            print("\nThe rule is not safe.")
+            return False
+    elif parsing_results.type=='query' and CheckQueryName(parsing_results)=="Error":
+        print("\nThere are no rules with such name.")
         return False
+    
+    # relationExist=CheckRelationName(parsing_results)
+   
+    # print(relationExist)
+    # if 	relationExist=="Error":
+        # print("\n There are no relations found in the database")
+        # return False
 	
 	#Check if the query is safe
-    errorResult=SafeRule(parsing_results)
+    # errorResult=SafeRule(parsing_results)
      
-    if errorResult=="Error":
-        print("\n Rule not safe.")
-        return False
+    # if errorResult=="Error":
+        # print("\n Rule not safe.")
+        # return False
 	
     #Print parsing for debug 
     printParsing(parsing_results)
@@ -162,7 +174,7 @@ def execute(string_to_parse):
         print("\nTranslation error.")
         return False
     #Print translation for debug
-    print("SQL: " + translation_results)
+    print("\nSQL: " + translation_results)
   
     
     #Execute query in Postgresql
@@ -170,7 +182,7 @@ def execute(string_to_parse):
         postgres_results = globvar.sql_session.execute(translation_results)   
     except:
         print("Error:", sys.exc_info()[0])
-        traceback.print_exc(file=sys.stdout) 
+        #traceback.print_exc(file=sys.stdout) 
         return False
     finally:
         globvar.sql_session.commit()     
@@ -183,14 +195,32 @@ def execute(string_to_parse):
      
     #Print results if type=query    
     if parsing_results.type=='query' and postgres_results:
+        print('\n')
         try:
+            flag = True
+            count = 0
             for row in postgres_results:
-                print (row)
+                #Header
+                if flag:
+                    for column, value in row.items():
+                        count = count + 1
+                    print('-'*20*count)
+                    for column, value in row.items():
+                        print('{0: <20}'.format(column), end="")
+                    print('')
+                    print('-'*20*count)
+                    flag=False
+                #Content
+                for column, value in row.items():
+                    print('{0: <20}'.format(value), end="")
+                print('')
+            #Footer
+            print('-'*20*count)
         except:
             print("Error:", sys.exc_info()[0])
-            traceback.print_exc(file=sys.stdout) 
+            #traceback.print_exc(file=sys.stdout) 
             return False
-    print('Done!\n')
+    print('\nDone!\n')
 
         
 # The help has to be done later
@@ -201,7 +231,7 @@ def help():
 ### MAIN SECTION ###
 if __name__ == '__main__':
 
-    
+
     #welcome message
     print ('''
 ---------------------------------
@@ -221,7 +251,7 @@ if __name__ == '__main__':
             '3' : datalog,
             '4' : script,
             '5' : help,
-            'q' : cleaning
+            'q' : quit
         }
         
     choice_text = '''
