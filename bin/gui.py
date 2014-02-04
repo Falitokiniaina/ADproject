@@ -225,7 +225,7 @@ def execute(string_to_parse):
         
 # The help has to be done later
 def help():
-    print ('\n### Help goes here ###') 
+    print ('\nVisit: https://github.com/Falitokiniaina/ADproject :)') 
   
     
 ### MAIN SECTION ###
