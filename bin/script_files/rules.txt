@@ -1,2 +1,3 @@
-V(x,y) :- R(x,y) and S(y,_,_). 
-Q(x,y) :- S(x,y,z) and V(z,t) and t>=3.
+viewfive(X,Z):-actor(X,_,Y) and movie(Y,Z).
+viewfive(X,Z).
+viewfive(fali,Z).
