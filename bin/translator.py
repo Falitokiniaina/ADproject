@@ -3,6 +3,7 @@ import sys
 
 import globvar
 import dataStructures
+from Myalchemy import Myalchemy
 
 def getTranslation(parsing_result):
     if not parsing_result: return None
@@ -36,19 +37,72 @@ def CreateSelect(results):
   
     
 ### CREATE VIEW ###  
-def CreateViews(results):
+#def CreateViews(results):
     # q(X,Y):-actor(X,Y,Z) and movie(Z,_).
     # CREATE VIEW q AS SELECT actor.name, actor.lastname FROM actor 
     # JOIN movie ON actor.title=movie.title 
-    statement = 'CREATE VIEW '+ results.head.name +' AS SELECT ' + CreateViews_SelectPart(results) + ' FROM '
-    for item in results.body:
-        if isinstance(item, dataStructures.Predicate):
-            statement = statement + item.name + ', '
-    statement = statement[:-2]
-    wherePart = CreateViews_WherePart(results)
-    if wherePart:
-        statement = statement + ' WHERE ' + wherePart + ';'
-    return statement    
+#    statement = 'CREATE VIEW '+ results.head.name +' AS SELECT ' + CreateViews_SelectPart(results) + ' FROM '
+#    for item in results.body:
+#        if isinstance(item, dataStructures.Predicate):
+#            statement = statement + item.name + ', '
+#    statement = statement[:-2]
+#    wherePart = CreateViews_WherePart(results)
+#    if wherePart:
+#        statement = statement + ' WHERE ' + wherePart + ';'
+#    return statement
+
+def CreateViews(results):
+    # q(X,Y):-actor(X,Y,Z) and movie(Z,_).
+    # CREATE VIEW q AS SELECT actor.name, actor.lastname FROM actor 
+    # JOIN movie ON actor.title=movie.title
+    if globvar.sql_session: 
+        #checking if the view already exists
+        NewViewName = results.head.name
+        postgresalchemy = Myalchemy(globvar.connection_string)        
+        ExistViews = postgresalchemy.getAllViews()
+        find=False
+        for v in ExistViews:
+            if v==NewViewName:
+                find=True
+                break
+        statement = 'CREATE VIEW '+ results.head.name +' AS SELECT ' + CreateViews_SelectPart(results) + ' FROM '
+        for item in results.body:            
+            if isinstance(item, dataStructures.Predicate) and not item.isNegated:                                
+                statement = statement + item.name + ', '
+        statement = statement[:-2]
+        wherePart = CreateViews_WherePart(results)
+        if wherePart:
+            statement = statement + ' WHERE ' + wherePart +';'            
+                 
+
+        
+        #we add UNION here               
+        if find:# the view already exists then we need to do the UNION
+            #Execute query in Postgresql
+            try:
+                sql = "select pg_get_viewdef('"+NewViewName+"'::regclass,true) as code"                
+                viewSQL_results = globvar.sql_session.execute(sql)
+                if viewSQL_results:
+                    row = viewSQL_results.fetchone()
+                    #print(row['code'])
+                
+                #Drop the existing view
+                sql = "DROP VIEW "+NewViewName
+                globvar.sql_session.execute(sql)
+                globvar.sql_session.commit()
+                
+                if statement.endswith(';'):
+                    statement = statement[:-1]                
+                statement = statement + ' UNION ALL ' + row['code']
+                
+            except:
+                print("Error:", sys.exc_info()[0])
+                #traceback.print_exc(file=sys.stdout) 
+                return False            
+                         
+        return statement
+        
+    
         
 #Build the select clause for a view 
 def CreateViews_SelectPart(Tree):
@@ -66,6 +120,7 @@ def CreateViews_SelectPart(Tree):
     
 #Build the where clause 
 def CreateViews_WherePart(Tree):
+    
     where = ''
     allTheTerms = [] 
     for item in Tree.body:
@@ -92,28 +147,59 @@ def CreateViews_WherePart(Tree):
         
         
         #else if the item in the body is a predicate for example actor(X,Y)
-        elif isinstance(item, dataStructures.Predicate):           
-           for term in item.terms:
+        elif isinstance(item, dataStructures.Predicate):
+            
+           #if predicate is negated
+           if  item.isNegated:
+               #print('<<'+where+'>>')
+               
+               where = 'NOT EXISTS ( SELECT * FROM ' + item.name +' WHERE ' + where[:-5]+ ' ) and '
+               
+               
                 
-                #if term is a constant for example actor(X,marcello), the parser puts quotes
-                if term.startswith("'"):
-                    index = item.terms.index(term)
-                    where = where + item.name + '.' + globvar.db_schema[item.name][index] + '=' + term + ' and '
-                
-                #if term is a free variable _ it should be ignored
-                elif term == "_":
-                    continue
-                
-                #else if term is a variable for example actor(X,Y), we have to loop the tree and search for the predicates that contain term 
-                elif term not in allTheTerms:
-                    allTheTerms.append(term)
-                    #print(term+ '    ')
-                    listOcc = getPredicatesContainingTerm(Tree, term)
-                    lastElm =  listOcc.pop()
-                    indexLastElm = lastElm.terms.index(term)
-                    for elm in listOcc:
-                        index = elm.terms.index(term)
-                        where = where + elm.name + '.' +  globvar.db_schema[elm.name][index] + '=' + lastElm.name + '.' +  globvar.db_schema[lastElm.name][indexLastElm] + ' and '
+               #negated = ' NOT EXISTS ( SELECT * FROM ' + item.name +' WHERE '
+#                for term in item.terms:                                                        
+#                     if term.startswith("'"):
+#                         index = item.terms.index(term)
+#                         where = where + item.name + '.' + globvar.db_schema[item.name][index] + '=' + term + ' and '
+#                     elif term == "_":
+#                         continue
+#                     elif term not in allTheTerms:
+#                         allTheTerms.append(term)
+#                         #print(term+ '    ')
+#                         listOcc = getPredicatesContainingTerm(Tree, term)
+#                         lastElm =  listOcc.pop()
+#                         indexLastElm = lastElm.terms.index(term)
+#                         for elm in listOcc:
+#                             index = elm.terms.index(term)
+#                             where = where + elm.name + '.' +  globvar.db_schema[elm.name][index] + '=' + lastElm.name + '.' +  globvar.db_schema[lastElm.name][indexLastElm] + ' and '               
+              # where = where + negated[:-5] + ' ) and '
+#                where = where + ' ) and '
+                 
+           else:          
+               for term in item.terms:                                
+                    
+                    #if term is a constant for example actor(X,marcello), the parser puts quotes
+                    if term.startswith("'"):
+                        index = item.terms.index(term)
+                        where = where + item.name + '.' + globvar.db_schema[item.name][index] + '=' + term + ' and '
+                    
+                    #if term is a free variable _ it should be ignored
+                    elif term == "_":
+                        continue
+                    
+                    #else if term is a variable for example actor(X,Y), we have to loop the tree and search for the predicates that contain term 
+                    elif term not in allTheTerms:
+                        allTheTerms.append(term)
+                        #print(term+ '    ')
+                        listOcc = getPredicatesContainingTerm(Tree, term)
+                        lastElm =  listOcc.pop()
+                        indexLastElm = lastElm.terms.index(term)
+                        for elm in listOcc:
+                            index = elm.terms.index(term)
+                            where = where + elm.name + '.' +  globvar.db_schema[elm.name][index] + '=' + lastElm.name + '.' +  globvar.db_schema[lastElm.name][indexLastElm] + ' and '
+                            
+            
     return where[:-5]
    
 #returns a list of tables where term occour

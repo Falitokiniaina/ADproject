@@ -1,29 +1,28 @@
-DROP TABLE IF EXISTS Movies CASCADE;
-DROP TABLE IF EXISTS Actor CASCADE;
+DROP TABLE IF EXISTS Movie CASCADE;
+DROP TABLE IF EXISTS actor CASCADE;
 
-CREATE TABLE Movies (
+CREATE TABLE Movie (
     title TEXT PRIMARY KEY NOT NULL,
     director TEXT NOT NULL
 );
 
-CREATE TABLE Actor (
+CREATE TABLE actor (
     name TEXT PRIMARY KEY NOT NULL,
     lastName TEXT NOT NULL,
     title TEXT NOT NULL
-    -- CONSTRAINT fk_movie_and_title FOREIGN KEY(title_movie) 
-    -- REFERENCES title_movie(title)
+    -- CONSTRAINT fkmovieandtitle FOREIGN KEY(titlemovie)
+    -- REFERENCES titlemovie(title)
 );
 
 
-INSERT INTO Movies(title,director) VALUES('Seven Samurai','Kurosawa');
-INSERT INTO Movies(title,director) VALUES('Son of the Nile','Chahine');
-INSERT INTO Movies(title,director) VALUES('Earth and Ashes','Rahimi');
-INSERT INTO Movies(title,director) VALUES('La Dolce Vita','Fellini');
+INSERT INTO Movie(title,director) VALUES('sevensamurai','kurosawa');
+INSERT INTO Movie(title,director) VALUES('sonofthenile','chahine');
+INSERT INTO Movie(title,director) VALUES('earthandashes','rahimi');
+INSERT INTO Movie(title,director) VALUES('ladolcevita','fellini');
 
-INSERT INTO Actor(name,lastname,title) VALUES('Kiril','Sardjoski','Seven Samurai');
-INSERT INTO Actor(name,lastname,title) VALUES('Ivan','Vukic','Seven Samurai');
-INSERT INTO Actor(name,lastname,title) VALUES('Ephrem','Berhe','Son of the Nile');
-INSERT INTO Actor(name,lastname,title) VALUES('Reddy','Aldino','Earth and Ashes');
-INSERT INTO Actor(name,lastname,title) VALUES('Fali','Rabearison','La Dolce Vita');
-INSERT INTO Actor(name,lastname,title) VALUES('Marcello','Benedetti','La Dolce Vita');
-
+INSERT INTO Actor(name,lastname,title) VALUES('kiril','sardjoski','sevensamurai');
+INSERT INTO Actor(name,lastname,title) VALUES('ivan','vukic','sevensamurai');
+INSERT INTO Actor(name,lastname,title) VALUES('ephrem','berhe','sonofthenile');
+INSERT INTO Actor(name,lastname,title) VALUES('reddy','aldino','earthandashes');
+INSERT INTO Actor(name,lastname,title) VALUES('fali','rabearison','ladolcevita');
+INSERT INTO Actor(name,lastname,title) VALUES('marcello','benedetti','ladolcevita');

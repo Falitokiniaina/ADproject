@@ -15,7 +15,7 @@ def getConnection():
     hostname = 'localhost'
     port = '5432'
     username = 'postgres'
-    password = 'root'
+    password = 'postgres'
     dbname = 'adb'
     globvar.connection_string = 'postgresql+psycopg2://' + username + ':' + password + '@' + hostname + ':' + port + '/' + dbname
     
