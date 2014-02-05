@@ -1,0 +1,28 @@
+DROP TABLE IF EXISTS Movie CASCADE;
+DROP TABLE IF EXISTS actor CASCADE;
+
+CREATE TABLE Movie (
+    title TEXT PRIMARY KEY NOT NULL,
+    director TEXT NOT NULL
+);
+
+CREATE TABLE actor (
+    name TEXT PRIMARY KEY NOT NULL,
+    lastName TEXT NOT NULL,
+    title TEXT NOT NULL
+    -- CONSTRAINT fkmovieandtitle FOREIGN KEY(titlemovie)
+    -- REFERENCES titlemovie(title)
+);
+
+
+INSERT INTO Movie(title,director) VALUES('sevensamurai','kurosawa');
+INSERT INTO Movie(title,director) VALUES('sonofthenile','chahine');
+INSERT INTO Movie(title,director) VALUES('earthandashes','rahimi');
+INSERT INTO Movie(title,director) VALUES('ladolcevita','fellini');
+
+INSERT INTO Actor(name,lastname,title) VALUES('kiril','sardjoski','sevensamurai');
+INSERT INTO Actor(name,lastname,title) VALUES('ivan','vukic','sevensamurai');
+INSERT INTO Actor(name,lastname,title) VALUES('ephrem','berhe','sonofthenile');
+INSERT INTO Actor(name,lastname,title) VALUES('reddy','aldino','earthandashes');
+INSERT INTO Actor(name,lastname,title) VALUES('fali','rabearison','ladolcevita');
+INSERT INTO Actor(name,lastname,title) VALUES('marcello','benedetti','ladolcevita');
