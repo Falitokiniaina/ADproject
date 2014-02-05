@@ -1,12 +1,12 @@
 DROP TABLE IF EXISTS Movies CASCADE;
 DROP TABLE IF EXISTS Actor CASCADE;
 
-CREATE TABLE Movies (
+CREATE TABLE movies (
     title TEXT PRIMARY KEY NOT NULL,
     director TEXT NOT NULL
 );
 
-CREATE TABLE Actor (
+CREATE TABLE actor (
     name TEXT PRIMARY KEY NOT NULL,
     lastName TEXT NOT NULL,
     title TEXT NOT NULL
@@ -15,15 +15,15 @@ CREATE TABLE Actor (
 );
 
 
-INSERT INTO Movies(title,director) VALUES('Seven Samurai','Kurosawa');
-INSERT INTO Movies(title,director) VALUES('Son of the Nile','Chahine');
-INSERT INTO Movies(title,director) VALUES('Earth and Ashes','Rahimi');
-INSERT INTO Movies(title,director) VALUES('La Dolce Vita','Fellini');
+INSERT INTO Movies(title,director) VALUES('seven_samurai','kurosawa');
+INSERT INTO Movies(title,director) VALUES('son_of_the_nile','chahine');
+INSERT INTO Movies(title,director) VALUES('earth_and_ashes','rahimi');
+INSERT INTO Movies(title,director) VALUES('la_dolce_vita','fellini');
 
-INSERT INTO Actor(name,lastname,title) VALUES('Kiril','Sardjoski','Seven Samurai');
-INSERT INTO Actor(name,lastname,title) VALUES('Ivan','Vukic','Seven Samurai');
-INSERT INTO Actor(name,lastname,title) VALUES('Ephrem','Berhe','Son of the Nile');
-INSERT INTO Actor(name,lastname,title) VALUES('Reddy','Aldino','Earth and Ashes');
-INSERT INTO Actor(name,lastname,title) VALUES('Fali','Rabearison','La Dolce Vita');
-INSERT INTO Actor(name,lastname,title) VALUES('Marcello','Benedetti','La Dolce Vita');
+INSERT INTO Actor(name,lastname,title) VALUES('kiril','sardjoski','seven_samurai');
+INSERT INTO Actor(name,lastname,title) VALUES('ivan','vukic','seven_samurai');
+INSERT INTO Actor(name,lastname,title) VALUES('ephrem','berhe','son_of_the_nile');
+INSERT INTO Actor(name,lastname,title) VALUES('reddy','aldino','earth_and_ashes');
+INSERT INTO Actor(name,lastname,title) VALUES('fali','rabearison','la_dolce_vita');
+INSERT INTO Actor(name,lastname,title) VALUES('marcello','benedetti','la_dolce_vita');
 
