@@ -15,7 +15,19 @@ YADI transforms a Datalog query to an Abstract Syntax Tree and provides with a q
 
 # What can I do with it?
 
-To be edited later on. According to our level of achievement.
+The following Datalog features have been implemented:
+- selection
+- conjunctive queries
+- anonymous variables
+- cross product
+- constraints
+- union
+- negation
+
+Available utilities:
+- database connection manager
+- database status and schema descriptor
+- Datalog scripting
 
 
 # Installation instructions
@@ -36,31 +48,23 @@ When starting the program it would be necessary to provide a username, database 
 The user will need having write/read permission over the database.
 
 
-# Documentation
-
-Documentation for YADI is available online via link(s). 
-
-
-# Example
-A Datalog rule for the database { movie(Title,Director), actor(Name,Lastname,Title) } looks like this:
-
-	q(Y,Z) :- movie(X,Y) and actor(_,Z,X) and X!=shining.
-	
-Such rule create a view of movie.director and actor.lastname for all the movies except "Shining".
-A Datalog query using the new rule would be:
-
-	q(kubrick,X).
-	
-Such query returns lastnames of all the actors who worked with "Kubrick" except in "Shining".
-
 # Usage – operating instructions
 
 	python gui.py
 
-
-Connection to the database can be done from the graphical user interface.
+Connection to the database can be done from the user interface.
 Default connection string:
 postgresql+psycopg2://postgres:root@localhost:5432/adb
+	
+	
+# Example
+A Datalog rule for the database { movie(Title,Director), actor(Name,Lastname,Title) } looks like this:
+
+	example(X):-actor(X,_,Y) and movie(Y,Z) and Z!=rahimi.
+	
+Such rule represents a join between actor and movie on the "Title" column and filters out movies where the director is "rahimi". The Datalog query for the new rule is:
+
+	example(X).	
 	
 
 # Contributing and Contact
@@ -78,11 +82,6 @@ Falitokiniaina Rabearison: r.falitokiniaina@gmail.com
 Kiril Sardjoski: kiril.sardjoski@gmail.com 
 
 Reddy Aldino: redino26@gmail.com 
-
-
-# Credits and Aknowledgments
-
-(TODO)
 
 
 # License
