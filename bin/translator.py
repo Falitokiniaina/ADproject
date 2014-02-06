@@ -37,20 +37,6 @@ def CreateSelect(results):
   
     
 ### CREATE VIEW ###  
-#def CreateViews(results):
-    # q(X,Y):-actor(X,Y,Z) and movie(Z,_).
-    # CREATE VIEW q AS SELECT actor.name, actor.lastname FROM actor 
-    # JOIN movie ON actor.title=movie.title 
-#    statement = 'CREATE VIEW '+ results.head.name +' AS SELECT ' + CreateViews_SelectPart(results) + ' FROM '
-#    for item in results.body:
-#        if isinstance(item, dataStructures.Predicate):
-#            statement = statement + item.name + ', '
-#    statement = statement[:-2]
-#    wherePart = CreateViews_WherePart(results)
-#    if wherePart:
-#        statement = statement + ' WHERE ' + wherePart + ';'
-#    return statement
-
 def CreateViews(results):
     # q(X,Y):-actor(X,Y,Z) and movie(Z,_).
     # CREATE VIEW q AS SELECT actor.name, actor.lastname FROM actor 
@@ -74,10 +60,10 @@ def CreateViews(results):
         if wherePart:
             statement = statement + ' WHERE ' + wherePart +';'            
                  
-
-        
+     
         #we add UNION here               
-        if find:# the view already exists then we need to do the UNION
+        if find:
+            # the view already exists then we need to do the UNION
             #Execute query in Postgresql
             try:
                 sql = "select pg_get_viewdef('"+NewViewName+"'::regclass,true) as code"                
@@ -150,32 +136,10 @@ def CreateViews_WherePart(Tree):
         elif isinstance(item, dataStructures.Predicate):
             
            #if predicate is negated
-           if  item.isNegated:
-               #print('<<'+where+'>>')
-               
+           if  item.isNegated:       
                where = 'NOT EXISTS ( SELECT * FROM ' + item.name +' WHERE ' + where[:-5]+ ' ) and '
-               
-               
-                
-               #negated = ' NOT EXISTS ( SELECT * FROM ' + item.name +' WHERE '
-#                for term in item.terms:                                                        
-#                     if term.startswith("'"):
-#                         index = item.terms.index(term)
-#                         where = where + item.name + '.' + globvar.db_schema[item.name][index] + '=' + term + ' and '
-#                     elif term == "_":
-#                         continue
-#                     elif term not in allTheTerms:
-#                         allTheTerms.append(term)
-#                         #print(term+ '    ')
-#                         listOcc = getPredicatesContainingTerm(Tree, term)
-#                         lastElm =  listOcc.pop()
-#                         indexLastElm = lastElm.terms.index(term)
-#                         for elm in listOcc:
-#                             index = elm.terms.index(term)
-#                             where = where + elm.name + '.' +  globvar.db_schema[elm.name][index] + '=' + lastElm.name + '.' +  globvar.db_schema[lastElm.name][indexLastElm] + ' and '               
-              # where = where + negated[:-5] + ' ) and '
-#                where = where + ' ) and '
-                 
+
+           #if predicate is positive
            else:          
                for term in item.terms:                                
                     
